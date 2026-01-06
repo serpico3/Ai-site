@@ -1,32 +1,74 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Diego's Tech Blog</title>
-    <link rel="stylesheet" href="styles/blog.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Diego Serpelloni – Tech Blog</title>
+  <link rel="stylesheet" href="styles/blog.css" />
 </head>
 <body>
-    <div class="container">
-        <header class="blog-header">
-            <h1>🚀 Diego's Tech Blog</h1>
-            <p>Articoli tech, networking, DevOps e programmazione</p>
-            <p><strong>📰 Auto-generated daily at 15:00 CET</strong></p>
-        </header>
-        
-        <main>
-            <section class="articles">
-                <h2>📰 Latest Articles</h2>
-                <ul>
-                    <li><a href="articles/2026-01-06.html">06 Jan 2026</a></li>
-                </ul>
-            </section>
-        </main>
-        
-        <footer class="blog-footer">
-            <p>© 2026 Diego Serpelloni | Powered by Groq + GitHub Actions</p>
-            <p><a href="https://github.com/serpico3">GitHub</a></p>
-        </footer>
-    </div>
+  <div class="page">
+    <header class="hero">
+      <div class="hero-left">
+        <div class="avatar">DS</div>
+      </div>
+      <div class="hero-right">
+        <h1>Diego Serpelloni</h1>
+        <p class="hero-subtitle">
+          22 anni, appassionato di sistemi, networking e sviluppo web.
+          Qui appunto quello che imparo smanettando tra server, codice e infrastrutture.
+        </p>
+        <div class="hero-tags">
+          <span class="chip">Linux</span>
+          <span class="chip">Networking</span>
+          <span class="chip">DevOps</span>
+          <span class="chip">Web Dev</span>
+        </div>
+        <nav class="hero-links">
+          <a href="https://github.com/serpico3" target="_blank" rel="noreferrer">GitHub</a>
+          <a href="mailto:diego@example.com">Contattami</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="section">
+        <div class="section-header">
+          <h2>Articoli recenti</h2>
+          <p class="section-subtitle">
+            Appunti veloci su quello che sto studiando o testando ultimamente.
+          </p>
+        </div>
+        <ul class="post-list">
+          <li class="post-item">
+            <a href="articles/2026-01-06.html" class="post-card">
+              <div class="post-meta">
+                <span class="post-date">06 Gen 2026</span>
+                <span class="post-dot">•</span>
+                <span class="post-readtime">5–10 min</span>
+              </div>
+              <h3 class="post-title">
+                Rivoluzione nell'Intelligenza Artificiale: Il Potente Modello di Lingua di Meta AI
+              </h3>
+              <p class="post-excerpt">
+                Una panoramica pratica su come i nuovi modelli di linguaggio stanno cambiando il modo in cui scriviamo codice,
+                costruiamo tool e ragioniamo sui sistemi.
+              </p>
+              <div class="post-tags">
+                <span class="chip small">AI</span>
+                <span class="chip small">Infra</span>
+              </div>
+            </a>
+          </li>
+          <!-- I nuovi articoli verranno aggiunti dallo script qui sopra questo commento -->
+        </ul>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>© 2026 Diego Serpelloni</p>
+      <p class="footer-sub">Costruito tra una lezione e l'altra, con tanta caffeina.</p>
+    </footer>
+  </div>
 </body>
 </html>
