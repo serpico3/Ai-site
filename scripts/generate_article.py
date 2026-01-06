@@ -148,11 +148,11 @@ def create_html_article(markdown_content, timestamp):
     <meta name="author" content="Diego Serpelloni">
     <meta name="description" content="{tldr[:160] if tldr else 'Article by Diego Serpelloni'}">
     <title>{title} | Diego's Tech Blog</title>
-    <link rel="stylesheet" href="../../styles/blog.css">
+    <link rel="stylesheet" href="../styles/blog.css">
 </head>
 <body>
     <div class="page">
-        <a href="../../index.html" class="back-link">← Torna agli articoli</a>
+        <a href="../index.html" class="back-link">← Torna agli articoli</a>
         
         <article class="article">
             <header class="article-header">
@@ -181,7 +181,7 @@ def create_html_article(markdown_content, timestamp):
             </footer>
         </article>
         
-        <a href="../../index.html" class="back-link" style="margin-top: 30px;">← Torna agli articoli</a>
+        <a href="../index.html" class="back-link" style="margin-top: 30px;">← Torna agli articoli</a>
     </div>
 </body>
 </html>"""
