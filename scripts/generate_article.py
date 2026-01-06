@@ -8,27 +8,27 @@ import os
 import sys
 from datetime import datetime
 from pathlib import Path
-from groq import Groq
-
-def get_groq_client():
-    """Inizializza client Groq"""
-    api_key = os.environ.get("GROQ_API_KEY")
-    if not api_key:
-        raise ValueError("❌ GROQ_API_KEY non trovata nelle environment variables")
-    print(f"✅ API Key trovata: {api_key[:20]}...")
-    return Groq(api_key=api_key)
 
 def generate_article():
     """Genera articolo usando Groq"""
+    from groq import Groq
+    
     print("🤖 Connessione a Groq in corso...")
-    client = get_groq_client()
+    
+    api_key = os.environ.get("GROQ_API_KEY")
+    if not api_key:
+        raise ValueError("❌ GROQ_API_KEY non trovata nelle environment variables")
+    
+    print(f"✅ API Key trovata: {api_key[:20]}...")
+    
+    client = Groq(api_key=api_key)
     
     today = datetime.now()
     date_str = today.strftime("%Y-%m-%d")
     print(f"📅 Data articolo: {date_str}")
     
     # Prompt per generare articolo TLDR
-    prompt = """Sei Diego Serpelloni, un ragazzo di 22 anni, esperto di informatica e networking con una laurea in informatica.
+    prompt = """Sei Diego Serpelloni, un ragazzo di 22 anni, esperto di informatica e networking.
     
 Genera un articolo tech TLDR (Too Long; Didn't Read) per il tuo blog personale.
 
@@ -47,21 +47,25 @@ REQUISITI:
   7. Link/Risorse
 
 Scrivi in markdown. Sii specifico, tecnico ma comprensibile.
-
 Risponi SOLO con il contenuto dell'articolo, senza cornice."""
 
     print("✍️ Generazione articolo...")
-    message = client.messages.create(
+    
+    chat_completion = client.chat.completions.create(
+        messages=[
+            {
+                "role": "user",
+                "content": prompt,
+            }
+        ],
         model="mixtral-8x7b-32768",
         max_tokens=2000,
-        messages=[
-            {"role": "user", "content": prompt}
-        ]
     )
     
-    content = message.content.text
+    content = chat_completion.choices[0].message.content
     print(f"✅ Articolo generato ({len(content)} caratteri)")
     return content
+
 
 def create_html_article(markdown_content, date_str):
     """Converte il contenuto in HTML stilizzato"""
@@ -158,9 +162,9 @@ def create_html_article(markdown_content, date_str):
     
     return html_template
 
+
 def save_article(html_content, date_str):
     """Salva articolo in cartella articles"""
-    # PERCORSO CORRETTO - relativo alla root del repo
     repo_root = Path(__file__).parent.parent
     articles_dir = repo_root / "articles"
     articles_dir.mkdir(exist_ok=True)
@@ -171,18 +175,18 @@ def save_article(html_content, date_str):
     print(f"💾 Articolo salvato: {article_path}")
     return str(article_path)
 
+
 def update_index(date_str):
     """Aggiorna index.html con il nuovo articolo"""
-    # PERCORSO CORRETTO - relativo alla root del repo
     repo_root = Path(__file__).parent.parent
     index_path = repo_root / "index.html"
     
     print(f"📄 Cercando index.html in: {index_path}")
     
-    # Se l'index non esiste, lo creiamo
     if not index_path.exists():
         print("⚠️ index.html non trovato, creazione file di default...")
         create_default_index(repo_root)
+        return
     
     content = index_path.read_text(encoding="utf-8")
     
@@ -196,6 +200,7 @@ def update_index(date_str):
         print(f"✅ Index.html aggiornato con nuovo articolo")
     else:
         print("⚠️ </ul> non trovato in index.html")
+
 
 def create_default_index(repo_root):
     """Crea index.html di default se non esiste"""
@@ -233,7 +238,8 @@ def create_default_index(repo_root):
     
     index_path = repo_root / "index.html"
     index_path.write_text(index_content, encoding="utf-8")
-    print(f"✅ File index.html creato in: {index_path}")
+    print(f"✅ File index.html creato")
+
 
 def main():
     """Main function"""
@@ -265,6 +271,7 @@ def main():
         import traceback
         traceback.print_exc()
         sys.exit(1)
+
 
 if __name__ == "__main__":
     main()
