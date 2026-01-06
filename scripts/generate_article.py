@@ -5,7 +5,7 @@ Diego Serpelloni - Article Generator Bot
 """
 
 import os
-import json
+import sys
 from datetime import datetime
 from pathlib import Path
 from groq import Groq
@@ -14,15 +14,18 @@ def get_groq_client():
     """Inizializza client Groq"""
     api_key = os.environ.get("GROQ_API_KEY")
     if not api_key:
-        raise ValueError("GROQ_API_KEY non trovata nelle environment variables")
+        raise ValueError("❌ GROQ_API_KEY non trovata nelle environment variables")
+    print(f"✅ API Key trovata: {api_key[:20]}...")
     return Groq(api_key=api_key)
 
 def generate_article():
     """Genera articolo usando Groq"""
+    print("🤖 Connessione a Groq in corso...")
     client = get_groq_client()
     
     today = datetime.now()
     date_str = today.strftime("%Y-%m-%d")
+    print(f"📅 Data articolo: {date_str}")
     
     # Prompt per generare articolo TLDR
     prompt = """Sei Diego Serpelloni, un ragazzo di 22 anni, esperto di informatica e networking con una laurea in informatica.
@@ -41,12 +44,13 @@ REQUISITI:
   4. La Soluzione/Innovazione
   5. Implicazioni Pratiche
   6. Cosa Aspettarsi
-  7. Link/Risorse (crea URL plausibili)
+  7. Link/Risorse
 
-Scrivi in markdown. Sii specifico, tecnico ma comprensibile. Aggiungi dettagli che solo un esperto di networking darebbe.
+Scrivi in markdown. Sii specifico, tecnico ma comprensibile.
 
 Risponi SOLO con il contenuto dell'articolo, senza cornice."""
 
+    print("✍️ Generazione articolo...")
     message = client.messages.create(
         model="mixtral-8x7b-32768",
         max_tokens=2000,
@@ -55,7 +59,9 @@ Risponi SOLO con il contenuto dell'articolo, senza cornice."""
         ]
     )
     
-    return message.content.text
+    content = message.content.text
+    print(f"✅ Articolo generato ({len(content)} caratteri)")
+    return content
 
 def create_html_article(markdown_content, date_str):
     """Converte il contenuto in HTML stilizzato"""
@@ -68,18 +74,12 @@ def create_html_article(markdown_content, date_str):
     body_lines = []
     
     in_tldr = False
-    skip_next = False
     
-    for i, line in enumerate(lines):
-        if skip_next:
-            skip_next = False
-            continue
-            
+    for line in lines:
         if line.startswith("# "):
             title = line.replace("# ", "").strip()
         elif line.startswith("## TL;DR") or line.startswith("## TL;DR:"):
             in_tldr = True
-            skip_next = True
             continue
         elif in_tldr and line.strip():
             tldr = line.strip()
@@ -160,21 +160,29 @@ def create_html_article(markdown_content, date_str):
 
 def save_article(html_content, date_str):
     """Salva articolo in cartella articles"""
-    articles_dir = Path("articles")
+    # PERCORSO CORRETTO - relativo alla root del repo
+    repo_root = Path(__file__).parent.parent
+    articles_dir = repo_root / "articles"
     articles_dir.mkdir(exist_ok=True)
     
     article_path = articles_dir / f"{date_str}.html"
     article_path.write_text(html_content, encoding="utf-8")
     
+    print(f"💾 Articolo salvato: {article_path}")
     return str(article_path)
 
 def update_index(date_str):
     """Aggiorna index.html con il nuovo articolo"""
-    index_path = Path("index.html")
+    # PERCORSO CORRETTO - relativo alla root del repo
+    repo_root = Path(__file__).parent.parent
+    index_path = repo_root / "index.html"
+    
+    print(f"📄 Cercando index.html in: {index_path}")
     
     # Se l'index non esiste, lo creiamo
     if not index_path.exists():
-        create_default_index()
+        print("⚠️ index.html non trovato, creazione file di default...")
+        create_default_index(repo_root)
     
     content = index_path.read_text(encoding="utf-8")
     
@@ -182,11 +190,14 @@ def update_index(date_str):
     new_entry = f'<li><a href="articles/{date_str}.html">{datetime.strptime(date_str, "%Y-%m-%d").strftime("%d %b %Y")}</a></li>'
     
     # Inserisce prima della chiusura di </ul>
-    content = content.replace("</ul>", f"{new_entry}\n</ul>", 1)
-    
-    index_path.write_text(content, encoding="utf-8")
+    if "</ul>" in content:
+        content = content.replace("</ul>", f"{new_entry}\n                </ul>", 1)
+        index_path.write_text(content, encoding="utf-8")
+        print(f"✅ Index.html aggiornato con nuovo articolo")
+    else:
+        print("⚠️ </ul> non trovato in index.html")
 
-def create_default_index():
+def create_default_index(repo_root):
     """Crea index.html di default se non esiste"""
     index_content = """<!DOCTYPE html>
 <html lang="it">
@@ -201,7 +212,7 @@ def create_default_index():
         <header class="blog-header">
             <h1>🚀 Diego's Tech Blog</h1>
             <p>Articoli tech, networking, DevOps e programmazione</p>
-            <p><strong>Auto-generated daily at 15:00 CET</strong></p>
+            <p><strong>📰 Auto-generated daily at 15:00 CET</strong></p>
         </header>
         
         <main>
@@ -220,11 +231,15 @@ def create_default_index():
 </body>
 </html>"""
     
-    Path("index.html").write_text(index_content, encoding="utf-8")
+    index_path = repo_root / "index.html"
+    index_path.write_text(index_content, encoding="utf-8")
+    print(f"✅ File index.html creato in: {index_path}")
 
 def main():
     """Main function"""
-    print("🤖 Generating article with Groq...")
+    print("=" * 60)
+    print("🤖 Diego's Article Generator Bot")
+    print("=" * 60)
     
     try:
         # Genera articolo
@@ -232,22 +247,24 @@ def main():
         today = datetime.now().strftime("%Y-%m-%d")
         
         # Crea HTML
+        print("🎨 Conversione in HTML...")
         html_article = create_html_article(article_content, today)
         
         # Salva articolo
         article_path = save_article(html_article, today)
-        print(f"✅ Article saved: {article_path}")
         
         # Aggiorna index
         update_index(today)
-        print(f"✅ Index updated")
         
-        print(f"\n📰 Article generated successfully!")
-        print(f"Date: {today}")
+        print("\n" + "=" * 60)
+        print(f"✅ SUCCESSO! Articolo generato per: {today}")
+        print("=" * 60)
         
     except Exception as e:
-        print(f"❌ Error: {str(e)}")
-        raise
+        print(f"\n❌ ERRORE: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()
