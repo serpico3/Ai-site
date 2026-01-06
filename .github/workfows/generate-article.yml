@@ -11,6 +11,7 @@ permissions:
 jobs:
   generate-article:
     runs-on: ubuntu-latest
+    
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -30,7 +31,9 @@ jobs:
       - name: Generate article
         env:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
-        run: python scripts/generate_article.py
+        run: |
+          cd $GITHUB_WORKSPACE
+          python scripts/generate_article.py
 
       - name: Configure git
         run: |
