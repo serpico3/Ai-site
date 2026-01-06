@@ -58,7 +58,7 @@ Risponi SOLO con il contenuto dell'articolo, senza cornice."""
                 "content": prompt,
             }
         ],
-        model="llama-3.1-70b-versatile",
+        "model": "openai/gpt-oss-20b",
         max_tokens=2000,
     )
     
