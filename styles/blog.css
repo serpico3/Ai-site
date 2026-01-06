@@ -1,0 +1,104 @@
+/* Diego's Tech Blog - Stylesheet */
+:root {
+    --primary-color: #2196F3;
+    --primary-dark: #1976D2;
+    --text-color: #212121;
+    --text-light: #666666;
+    --bg-light: #fafafa;
+    --bg-white: #ffffff;
+    --border-color: #e0e0e0;
+    --accent: #FF6B6B;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    line-height: 1.6;
+    color: var(--text-color);
+    background-color: var(--bg-light);
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+/* Header */
+.blog-header {
+    text-align: center;
+    padding: 3rem 0;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+    color: white;
+    border-radius: 12px;
+    margin-bottom: 3rem;
+    box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+}
+
+.blog-header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+}
+
+.blog-header p {
+    font-size: 1.1rem;
+    opacity: 0.95;
+    margin: 0.25rem 0;
+}
+
+/* Article */
+.article {
+    background: var(--bg-white);
+    padding: 2.5rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+    line-height: 1.8;
+}
+
+.article-header {
+    border-bottom: 2px solid var(--border-color);
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+}
+
+.article-header h1 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    color: var(--primary-color);
+}
+
+.article-meta {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    font-size: 0.9rem;
+    color: var(--text-light);
+    margin-bottom: 1rem;
+}
+
+.author {
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.date {
+    color: var(--text-light);
+}
+
+.read-time {
+    color: var(--primary-color);
+    font-weight:
+    600;
+}
