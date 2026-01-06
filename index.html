@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Diego Serpelloni">
+    <meta name="description" content="Diego's Tech Blog - Articoli tech, networking, DevOps e programmazione. Aggiornamenti giornalieri generati automaticamente.">
+    <meta name="keywords" content="tech, networking, devops, programmazione, ai, blog">
+    <meta name="theme-color" content="#2196F3">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="Diego's Tech Blog">
+    <meta property="og:description" content="Articoli tech TLDR generati automaticamente ogni giorno alle 15:00 CET">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://serpico3.github.io/Ai-site/">
+    
+    <title>Diego's Tech Blog | Articoli Tech TLDR Giornalieri</title>
+    <link rel="stylesheet" href="styles/blog.css">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>">
+</head>
+<body>
+    <div class="container">
+        <header class="blog-header">
+            <h1>🚀 Diego's Tech Blog</h1>
+            <p>Articoli tech, networking, DevOps e programmazione</p>
+            <p class="blog-subtitle"><strong>📰 Auto-generated daily at 15:00 CET</strong></p>
+            <p class="blog-tech">Powered by Groq + GitHub Actions</p>
+        </header>
+        
+        <main>
+            <section class="hero">
+                <div class="hero-content">
+                    <h2>Welcome 👋</h2>
+                    <p>Questo è il mio blog personale dove pubblico <strong>articoli tech TLDR</strong> (Too Long; Didn't Read) generati automaticamente ogni giorno.</p>
+                    <ul class="features">
+                        <li>✅ <strong>Articoli Giornalieri</strong> - Un nuovo articolo ogni giorno alle 15:00 CET</li>
+                        <li>✅ <strong>TLDR Format</strong> - 5-10 minuti di lettura, contenuti concisi e utili</li>
+                        <li>✅ <strong>Argomenti Variegati</strong> - Tech, AI, DevOps, Networking, Programmazione</li>
+                        <li>✅ <strong>Perspective Esperta</strong> - Scritti da una prospettiva di esperto in networking</li>
+                        <li>✅ <strong>Automatico</strong> - Generati da IA (Groq), pubblicati automaticamente</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section class="articles">
+                <h2>📚 Latest Articles</h2>
+                <p class="articles-info">I nuovi articoli appariranno qui automaticamente ogni giorno.</p>
+                <ul id="articles-list">
+                    <!-- Gli articoli verranno aggiunti automaticamente qui -->
+                </ul>
+                <div id="no-articles" class="no-articles">
+                    <p>📝 Nessun articolo ancora. Il primo verrà generato domani!</p>
+                </div>
+            </section>
+
+            <section class="info">
+                <h2>ℹ️ About This Blog</h2>
+                <div class="info-grid">
+                    <div class="info-card">
+                        <h3>🤖 Generazione Automatica</h3>
+                        <p>Ogni articolo viene generato automaticamente usando Groq API (modello Mixtral 8x7b) alle 15:00 CET ogni giorno.</p>
+                    </div>
+                    <div class="info-card">
+                        <h3>📄 Formato TLDR</h3>
+                        <p>Articoli brevi e concisi, perfetti per professionisti occupati. 5-10 minuti di lettura per rimanere aggiornato.</p>
+                    </div>
+                    <div class="info-card">
+                        <h3>🔧 Tech Stack</h3>
+                        <p><strong>Backend:</strong> Groq API + GitHub Actions<br><strong>Frontend:</strong> HTML + CSS + JavaScript<br><strong>Hosting:</strong> GitHub Pages</p>
+                    </div>
+                    <div class="info-card">
+                        <h3>👨‍💻 Autore</h3>
+                        <p><strong>Diego Serpelloni</strong><br>Esperto di Networking<br>Laureato in Informatica<br><a href="https://github.com/serpico3" target="_blank">GitHub Profile</a></p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="stats">
+                <h2>📊 Blog Stats</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="total-articles">0</div>
+                        <div class="stat-label">Articoli Totali</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">30</div>
+                        <div class="stat-label">Articoli/Mese</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">Free</div>
+                        <div class="stat-label">Hosting + AI</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">15:00</div>
+                        <div class="stat-label">Pubblicazione CET</div>
+                    </div>
+                </div>
+            </section>
+        </main>
+        
+        <footer class="blog-footer">
+            <div class="footer-content">
+                <p>© 2026 Diego Serpelloni | Tech Blog</p>
+                <div class="footer-links">
+                    <a href="https://github.com/serpico3" target="_blank" rel="noopener noreferrer">GitHub</a>
+                    <span>•</span>
+                    <a href="https://github.com/serpico3/Ai-site" target="_blank" rel="noopener noreferrer">Repo</a>
+                </div>
+                <p class="footer-tech">Powered by <strong>Groq</strong> + <strong>GitHub Actions</strong></p>
+            </div>
+        </footer>
+    </div>
+
+    <style>
+        /* Extra styles per index.html */
+        .blog-subtitle {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.95);
+            margin: 0.5rem 0;
+        }
+
+        .blog-tech {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-top: 0.5rem;
+        }
+
+        .hero {
+            background: white;
+            padding: 3rem 2.5rem;
+            border-radius: 12px;
+            margin-bottom: 3rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .hero h2 {
+            color: #2196F3;
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+            color: #333;
+        }
+
+        .features {
+            list-style: none;
+            margin: 1.5rem 0;
+        }
+
+        .features li {
+            padding: 0.75rem 0;
+            font-size: 1rem;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .features li strong {
+            color: #2196F3;
+        }
+
+        .articles-info {
+            color: #666;
+            font-style: italic;
+            margin-bottom: 1.5rem;
+        }
+
+        .no-articles {
+            text-align: center;
+            padding: 2rem;
+            background: #f5f5f5;
+            border-radius: 8px;
+            color: #999;
+        }
+
+        .info {
+            margin: 3rem 0;
+        }
+
+        .info h2 {
+            color: #2196F3;
+            margin-bottom: 1.5rem;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .info-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid #2196F3;
+        }
+
+        .info-card h3 {
+            color: #2196F3;
+            margin-bottom: 0.75rem;
+        }
+
+        .info-card p {
+            color: #666;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .info-card a {
+            color: #2196F3;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .info-card a:hover {
+            text-decoration: underline;
+        }
+
+        .stats {
+            background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+            padding: 2.5rem;
+            border-radius: 12px;
+            color: white;
+            margin: 3rem 0;
+        }
+
+        .stats h2 {
+            color: white;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .stat-card {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1.5rem;
+            border-radius: 8px;
+            backdrop-filter: blur(10px);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .footer-content {
+            text-align: center;
+        }
+
+        .footer-links {
+            margin: 0.75rem 0;
+        }
+
+        .footer-links a {
+            color: #2196F3;
+            margin: 0 0.5rem;
+        }
+
+        .footer-tech {
+            font-size: 0.9rem;
+            color: #999;
+            margin: 0.5rem 0 0 0;
+        }
+
+        @media (max-width: 768px) {
+            .hero {
+                padding: 2rem 1.5rem;
+            }
+
+            .hero h2 {
+                font-size: 1.5rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .info-grid,
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-number {
+                font-size: 2rem;
+            }
+        }
+    </style>
+
+    <script>
+        // Funzione per contare gli articoli
+        function updateArticleCount() {
+            const articlesList = document.getElementById('articles-list');
+            const noArticles = document.getElementById('no-articles');
+            const articleCount = articlesList.children.length;
+            
+            document.getElementById('total-articles').textContent = articleCount;
+            
+            if (articleCount > 0) {
+                noArticles.style.display = 'none';
+            } else {
+                noArticles.style.display = 'block';
+            }
+        }
+
+        // Esegui al caricamento della pagina
+        document.addEventListener('DOMContentLoaded', updateArticleCount);
+
+        // Aggiorna ogni 10 secondi (per riflettere nuovi articoli)
+        setInterval(updateArticleCount, 10000);
+    </script>
+</body>
+</html>
