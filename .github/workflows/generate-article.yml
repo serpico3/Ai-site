@@ -1,0 +1,32 @@
+name: Generate Article
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 14 * * *'
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      
+      - run: pip install groq
+      
+      - env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+        run: python scripts/generate_article.py
+      
+      - run: |
+          git config user.name "Bot"
+          git config user.email "bot@example.com"
+          git add -A
+          git commit -m "Article" || exit 0
+          git push
