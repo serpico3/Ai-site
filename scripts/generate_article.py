@@ -52,13 +52,17 @@ FORMATO RICHIESTO (IMPORTANTE - SEGUI ESATTAMENTE):
 ---
 
 REQUISITI:
-- Argomento: Tema tech/AI/DevOps/Networking/Programmazione recente (2025-2026)
-- Lunghezza: 800-1200 parole (5-10 minuti lettura)
+- Argomento: Tema tech/DevOps/Networking/Programmazione recente
+- Lunghezza: 2000-2500 parole (5-10 minuti lettura)
 - Tono: Professionale ma colloquiale, come parlassi a un amico
 - Linguaggio: Italiano
 - NO AI/automazione menzionata nel testo
 - NO emoji, NO markdown speciale, solo intestazioni # e paragrafi
 
+IMPORTANTE:
+- Deve essere per il grande pubblico, non trattare temi troppo di nicchia, se lo fai spiega bene i concetti e usa esempi pratici
+- Fai una ricerca degli articoli più recenti delle notizie tech per ispirarti
+- Usa un formato tutoriale, con esempi pratici e casi d'uso
 Scrivi SOLO il contenuto articolo."""
 
     print("✍️ Generazione articolo...")
