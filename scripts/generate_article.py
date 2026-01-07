@@ -63,6 +63,7 @@ IMPORTANTE:
 - Deve essere per il grande pubblico, non trattare temi troppo di nicchia, se lo fai spiega bene i concetti e usa esempi pratici
 - Fai una ricerca degli articoli più recenti delle notizie tech per ispirarti
 - Usa un formato tutoriale, con esempi pratici e casi d'uso
+- Se ricavi notizie su articoli usciti recentemente, fai un articolo inerente (esempio nuovi aggiornamenti/nuovi prodotti apple/nuovi open source)
 Scrivi SOLO il contenuto articolo."""
 
     print("✍️ Generazione articolo...")
