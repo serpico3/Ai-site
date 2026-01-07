@@ -52,8 +52,8 @@ FORMATO RICHIESTO (IMPORTANTE - SEGUI ESATTAMENTE):
 ---
 
 REQUISITI:
-- Argomento: Tema tech/DevOps/Networking/Programmazione recente
-- Lunghezza: 2000-2500 parole (5-10 minuti lettura)
+- Argomento: Tema tech/Networking/Programmazione/tool opensource/infrastrutture/homeserver/ìoT
+- Lunghezza: 2000-2500 parole 
 - Tono: Professionale ma colloquiale, come parlassi a un amico
 - Linguaggio: Italiano
 - NO AI/automazione menzionata nel testo
