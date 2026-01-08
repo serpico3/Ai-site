@@ -16,6 +16,8 @@ import textwrap
 def generate_image_with_text(title, subtitle, output_path):
     """Crea immagine 1080x1080px con testo (formato Instagram post)"""
     
+    print(f"🎨 Creating image: {output_path}")
+    
     # Crea immagine gradiente tech
     img = Image.new('RGB', (1080, 1080), color=(5, 7, 10))
     draw = ImageDraw.Draw(img)
@@ -31,7 +33,9 @@ def generate_image_with_text(title, subtitle, output_path):
     try:
         title_font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 60)
         subtitle_font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 40)
-    except:
+        print("✅ System fonts loaded")
+    except Exception as e:
+        print(f"⚠️ System fonts not found: {e}, using default")
         title_font = ImageFont.load_default()
         subtitle_font = ImageFont.load_default()
     
@@ -55,7 +59,8 @@ def generate_image_with_text(title, subtitle, output_path):
     draw.text((x, y_offset), subtitle, fill=(66, 179, 255), font=subtitle_font)
     
     img.save(output_path)
-    print(f"🎨 Immagine generata: {output_path}")
+    print(f"✅ Image saved: {output_path}")
+    print(f"   Size: {os.path.getsize(output_path) / 1024:.1f} KB")
     return output_path
 
 
@@ -63,9 +68,13 @@ def generate_caption(topic):
     """Genera caption Instagram via Groq"""
     from groq import Groq
     
+    print("📝 Generating caption...")
+    
     api_key = os.environ.get("GROQ_API_KEY")
     if not api_key:
         raise ValueError("❌ GROQ_API_KEY non trovata")
+    
+    print(f"✅ GROQ_API_KEY found: {api_key[:10]}...")
     
     client = Groq(api_key=api_key)
     
@@ -90,67 +99,138 @@ Scrivi SOLO la caption, niente altro."""
     )
     
     caption = response.choices[0].message.content.strip()
-    print(f"✍️ Caption generata: {caption[:100]}...")
+    print(f"✅ Caption generated ({len(caption)} chars)")
+    print(f"   Preview: {caption[:80]}...")
     return caption
 
 
 def publish_to_instagram(image_path, caption):
     """Pubblica immagine + caption su Instagram via Meta Graph API"""
     
+    print("\n=== 📤 Publishing to Instagram ===")
+    
     access_token = os.environ.get("INSTAGRAM_ACCESS_TOKEN")
     business_account_id = os.environ.get("INSTAGRAM_BUSINESS_ACCOUNT_ID")
     
-    if not access_token or not business_account_id:
-        raise ValueError("❌ INSTAGRAM_ACCESS_TOKEN o INSTAGRAM_BUSINESS_ACCOUNT_ID non trovati")
+    if not access_token:
+        print("❌ INSTAGRAM_ACCESS_TOKEN non trovato")
+        return False
     
-    # Step 1: Carica immagine su Instagram (crea container)
-    with open(image_path, 'rb') as f:
-        files = {'file': f}
+    if not business_account_id:
+        print("❌ INSTAGRAM_BUSINESS_ACCOUNT_ID non trovato")
+        return False
+    
+    print(f"✅ TOKEN found: {access_token[:10]}...")
+    print(f"✅ ACCOUNT_ID found: {business_account_id}")
+    
+    try:
+        # Leggi l'immagine
+        with open(image_path, 'rb') as f:
+            image_data = f.read()
+        
+        print(f"📁 Image size: {len(image_data) / 1024 / 1024:.2f} MB")
+        
+        # Step 1: Carica immagine (media container)
+        print("📤 Step 1: Creating media container...")
+        
+        container_url = f"https://graph.instagram.com/v18.0/{business_account_id}/media"
+        
+        files = {'file': ('image.png', image_data, 'image/png')}
         data = {
             'access_token': access_token,
+            'caption': caption,
+            'media_type': 'IMAGE'
         }
         
-        # Crea media container
-        response = requests.post(
-            f"https://graph.instagram.com/v18.0/{business_account_id}/media",
-            data=data,
-            files=files,
-            params={
-                'image_url': None,
-                'caption': caption,
-                'media_type': 'IMAGE'
-            }
-        )
-    
-    if response.status_code != 200:
-        # Fallback: prova con URL (se uploadi a server)
-        print(f"⚠️ Upload diretto non funziona, provo con URL...")
-        # Per ora, saltiamo questo step
-        return None
-    
-    result = response.json()
-    if 'id' in result:
+        print(f"   POST {container_url}")
+        print(f"   Caption length: {len(caption)}")
+        
+        response = requests.post(container_url, data=data, files=files, timeout=30)
+        
+        print(f"   Status: {response.status_code}")
+        print(f"   Response: {response.text[:200]}")
+        
+        if response.status_code != 200:
+            print(f"❌ Error creating media container: {response.status_code}")
+            print(f"   Full response: {response.text}")
+            return False
+        
+        result = response.json()
+        
+        if 'error' in result:
+            print(f"❌ API Error: {result['error']}")
+            return False
+        
+        if 'id' not in result:
+            print(f"❌ No media ID in response: {result}")
+            return False
+        
         media_id = result['id']
-        print(f"✅ Media creato: {media_id}")
+        print(f"✅ Media container created: {media_id}")
         
         # Step 2: Pubblica media
-        publish_response = requests.post(
-            f"https://graph.instagram.com/v18.0/{business_account_id}/media_publish",
-            data={
-                'creation_id': media_id,
-                'access_token': access_token
-            }
-        )
+        print("📤 Step 2: Publishing media...")
+        
+        publish_url = f"https://graph.instagram.com/v18.0/{business_account_id}/media_publish"
+        
+        publish_data = {
+            'creation_id': media_id,
+            'access_token': access_token
+        }
+        
+        print(f"   POST {publish_url}")
+        
+        publish_response = requests.post(publish_url, data=publish_data, timeout=30)
+        
+        print(f"   Status: {publish_response.status_code}")
+        print(f"   Response: {publish_response.text[:200]}")
         
         if publish_response.status_code == 200:
-            print(f"🎉 Post pubblicato su Instagram!")
-            return True
+            publish_result = publish_response.json()
+            
+            if 'id' in publish_result:
+                post_id = publish_result['id']
+                print(f"🎉 Post published successfully!")
+                print(f"   Post ID: {post_id}")
+                print(f"   URL: https://instagram.com/p/{post_id}/")
+                return True
+            else:
+                print(f"❌ No post ID in response: {publish_result}")
+                return False
         else:
-            print(f"❌ Errore pubblicazione: {publish_response.text}")
+            print(f"❌ Error publishing: {publish_response.status_code}")
+            print(f"   Response: {publish_response.text}")
             return False
-    else:
-        print(f"❌ Errore caricamento: {result}")
+    
+    except requests.exceptions.Timeout:
+        print("❌ Request timeout (Instagram API took too long)")
         return False
+    except requests.exceptions.ConnectionError:
+        print("❌ Connection error (network issue)")
+        return False
+    except Exception as e:
+        print(f"❌ Unexpected error: {e}")
+        import traceback
+        traceback.print_exc()
+        return False
+
+
+def save_caption_backup(caption, image_path):
+    """Salva caption come backup per review manuale"""
+    temp_dir = Path(__file__).parent.parent / "temp"
+    temp_dir.mkdir(exist_ok=True)
+    
+    caption_file = temp_dir / "instagram_caption.txt"
+    
+    content = f"""Generated: {datetime.now().isoformat()}
+Caption:
+{caption}
+
+Image: {image_path}
+"""
+    
+    caption_file.write_text(content)
+    print(f"💾 Backup caption saved: {caption_file}")
 
 
 def main():
@@ -176,25 +256,24 @@ def main():
             output_path=image_path
         )
         
-        # 3. Pubblica (se ENV vars presenti)
-        try:
-            publish_to_instagram(image_path, caption)
-        except Exception as e:
-            print(f"⚠️ Pubblicazione Instagram skippata: {e}")
-            print("📝 Salvo caption per review manuale...")
-            
-            # Salva caption in file per review
-            caption_file = Path(__file__).parent.parent / "temp" / "instagram_caption.txt"
-            caption_file.parent.mkdir(exist_ok=True)
-            caption_file.write_text(f"{caption}\n\n[Immagine: {image_path}]")
-            print(f"💾 Caption salvato: {caption_file}")
+        # 3. Salva backup della caption
+        save_caption_backup(caption, image_path)
+        
+        # 4. Pubblica su Instagram
+        success = publish_to_instagram(image_path, caption)
+        
+        if success:
+            print("\n✅ Instagram post published successfully!")
+        else:
+            print("\n⚠️ Instagram publishing failed, caption saved for manual review")
+            print(f"   Check: temp/instagram_caption.txt")
         
         print("\n" + "=" * 60)
-        print(f"✅ SUCCESSO!")
+        print(f"✅ GENERATOR COMPLETED")
         print("=" * 60)
         
     except Exception as e:
-        print(f"\n❌ ERRORE: {str(e)}")
+        print(f"\n❌ FATAL ERROR: {str(e)}")
         import traceback
         traceback.print_exc()
         sys.exit(1)
