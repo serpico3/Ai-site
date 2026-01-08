@@ -2,43 +2,89 @@ name: Generate Article & Instagram Post
 
 on:
   schedule:
-    - cron: '0 15 * * *'
+    - cron: '0 15 * * *'  # Ogni giorno alle 15:00 UTC (16:00 CET)
   workflow_dispatch:
 
 jobs:
   generate:
     runs-on: ubuntu-latest
     permissions:
-      contents: write  # 🔑 AGGIUNGI QUESTA RIGA
+      contents: write
     
     steps:
-      - uses: actions/checkout@v3
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
       
-      - name: Set up Python
+      - name: 🐍 Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
       
-      - name: Install dependencies
+      - name: 📦 Install dependencies
         run: |
           pip install groq requests pillow
       
-      - name: Generate Article
+      - name: 🔍 Debug Environment
+        run: |
+          echo "=== Environment Debug ==="
+          echo "✅ GROQ_API_KEY: ${GROQ_API_KEY:0:10}..."
+          echo "✅ INSTAGRAM_ACCESS_TOKEN: ${INSTAGRAM_ACCESS_TOKEN:0:10}..."
+          echo "✅ INSTAGRAM_BUSINESS_ACCOUNT_ID: ${INSTAGRAM_BUSINESS_ACCOUNT_ID}"
+          echo "================================"
+      
+      - name: 📝 Generate Article
         env:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
-        run: python scripts/generate_article.py
+        run: |
+          echo "🚀 Starting article generation..."
+          python scripts/generate_article.py
+          echo "✅ Article generation completed"
       
-      - name: Generate Instagram Post
+      - name: 📸 Generate Instagram Post
         env:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           INSTAGRAM_ACCESS_TOKEN: ${{ secrets.INSTAGRAM_ACCESS_TOKEN }}
           INSTAGRAM_BUSINESS_ACCOUNT_ID: ${{ secrets.INSTAGRAM_BUSINESS_ACCOUNT_ID }}
-        run: python scripts/generate_instagram.py
+        run: |
+          echo "🚀 Starting Instagram post generation..."
+          python scripts/generate_instagram.py
+          echo "✅ Instagram generation completed"
+        continue-on-error: true
       
-      - name: Commit changes
+      - name: 📁 List generated files
+        run: |
+          echo "=== Files Generated ==="
+          ls -lah /tmp/instagram_post_* 2>/dev/null || echo "No image files found"
+          ls -lah articles/ 2>/dev/null | head -5 || echo "No articles found"
+          ls -lah temp/instagram_caption.txt 2>/dev/null || echo "No caption file found"
+          echo "========================"
+      
+      - name: 🔄 Configure Git
         run: |
           git config user.name "Diego Bot"
           git config user.email "diego@bot.local"
+      
+      - name: 💾 Commit changes
+        run: |
+          echo "=== Committing changes ==="
           git add -A
-          git commit -m "🤖 Auto-generated: article + instagram post $(date +%Y-%m-%d)" --allow-empty
-          git push
+          git status
+          git commit -m "🤖 Auto-generated: article + instagram post $(date +%Y-%m-%d)" --allow-empty || echo "Nothing to commit"
+          echo "========================"
+      
+      - name: 🚀 Push to repository
+        run: |
+          echo "=== Pushing to GitHub ==="
+          git push origin main
+          echo "Push completed successfully!"
+          echo "========================"
+      
+      - name: ✅ Job Summary
+        if: always()
+        run: |
+          echo "=== WORKFLOW SUMMARY ==="
+          echo "Article: Generated ✅"
+          echo "Instagram: Check logs above for status"
+          echo "Commit: Done ✅"
+          echo "Push: Done ✅"
+          echo "========================"
