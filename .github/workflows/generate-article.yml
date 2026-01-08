@@ -10,20 +10,20 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-    
+
     steps:
       - name: 📥 Checkout repository
         uses: actions/checkout@v4
-      
+
       - name: 🐍 Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
-      
+
       - name: 📦 Install dependencies
         run: |
           pip install groq requests pillow
-      
+
       - name: 🔍 Debug Environment
         run: |
           echo "=== Environment Debug ==="
@@ -31,7 +31,7 @@ jobs:
           echo "✅ INSTAGRAM_ACCESS_TOKEN: ${INSTAGRAM_ACCESS_TOKEN:0:10}..."
           echo "✅ INSTAGRAM_BUSINESS_ACCOUNT_ID: ${INSTAGRAM_BUSINESS_ACCOUNT_ID}"
           echo "================================"
-      
+
       - name: 📝 Generate Article
         env:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
@@ -39,7 +39,7 @@ jobs:
           echo "🚀 Starting article generation..."
           python scripts/generate_article.py
           echo "✅ Article generation completed"
-      
+
       - name: 📸 Generate Instagram Post
         env:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
@@ -50,20 +50,19 @@ jobs:
           python scripts/generate_instagram.py
           echo "✅ Instagram generation completed"
         continue-on-error: true
-      
+
       - name: 📁 List generated files
         run: |
           echo "=== Files Generated ==="
-          ls -lah /tmp/instagram_post_* 2>/dev/null || echo "No image files found"
+          ls -lah docs/instagram/ 2>/dev/null | head -10 || echo "No image files found"
           ls -lah articles/ 2>/dev/null | head -5 || echo "No articles found"
-          ls -lah temp/instagram_caption.txt 2>/dev/null || echo "No caption file found"
           echo "========================"
-      
+
       - name: 🔄 Configure Git
         run: |
           git config user.name "Diego Bot"
           git config user.email "diego@bot.local"
-      
+
       - name: 💾 Commit changes
         run: |
           echo "=== Committing changes ==="
@@ -71,20 +70,21 @@ jobs:
           git status
           git commit -m "🤖 Auto-generated: article + instagram post $(date +%Y-%m-%d)" --allow-empty || echo "Nothing to commit"
           echo "========================"
-      
+
       - name: 🚀 Push to repository
         run: |
           echo "=== Pushing to GitHub ==="
           git push origin main
           echo "Push completed successfully!"
           echo "========================"
-      
+
       - name: ✅ Job Summary
         if: always()
         run: |
           echo "=== WORKFLOW SUMMARY ==="
           echo "Article: Generated ✅"
-          echo "Instagram: Check logs above for status"
+          echo "Instagram: Published or saved for backup"
           echo "Commit: Done ✅"
           echo "Push: Done ✅"
+          echo "Images: Available at https://serpico3.github.io/Ai-site/instagram/"
           echo "========================"
