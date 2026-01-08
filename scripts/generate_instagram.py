@@ -241,7 +241,7 @@ def main():
         
         # 3. Crea URL pubblico (GitHub Pages)
         # ⚠️ MODIFICA QUESTO CON IL TUO USERNAME/REPO
-        image_url = f"https://serpico3.github.io/Ai-site/instagram/{image_filename}"
+        image_url = f"https://serpico3.github.io/Ai-site/docs/instagram/{image_filename}"
         
         print(f"\n📍 Image URL for Instagram: {image_url}")
         
