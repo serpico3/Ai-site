@@ -2,6 +2,7 @@
 """
 Genera post Instagram giornaliero: immagine AI + caption
 Sincronizzato con articolo blog generato
+Pubblica automaticamente su Instagram via Meta Graph API
 """
 
 import os
@@ -104,8 +105,8 @@ Scrivi SOLO la caption, niente altro."""
     return caption
 
 
-def publish_to_instagram(image_path, caption):
-    """Pubblica immagine + caption su Instagram via Meta Graph API"""
+def publish_to_instagram(image_url, caption):
+    """Pubblica immagine + caption su Instagram via Meta Graph API usando image_url"""
     
     print("\n=== 📤 Publishing to Instagram ===")
     
@@ -122,33 +123,27 @@ def publish_to_instagram(image_path, caption):
     
     print(f"✅ TOKEN found: {access_token[:10]}...")
     print(f"✅ ACCOUNT_ID found: {business_account_id}")
+    print(f"✅ Image URL: {image_url}")
     
     try:
-        # Leggi l'immagine
-        with open(image_path, 'rb') as f:
-            image_data = f.read()
-        
-        print(f"📁 Image size: {len(image_data) / 1024 / 1024:.2f} MB")
-        
-        # Step 1: Carica immagine (media container)
+        # Step 1: Crea media container con image_url (CORRETTO)
         print("📤 Step 1: Creating media container...")
         
         container_url = f"https://graph.instagram.com/v18.0/{business_account_id}/media"
         
-        files = {'file': ('image.png', image_data, 'image/png')}
-        data = {
-            'access_token': access_token,
+        payload = {
+            'image_url': image_url,
             'caption': caption,
-            'media_type': 'IMAGE'
+            'access_token': access_token,
         }
         
         print(f"   POST {container_url}")
         print(f"   Caption length: {len(caption)}")
         
-        response = requests.post(container_url, data=data, files=files, timeout=30)
+        response = requests.post(container_url, data=payload, timeout=30)
         
         print(f"   Status: {response.status_code}")
-        print(f"   Response: {response.text[:200]}")
+        print(f"   Response: {response.text[:300]}")
         
         if response.status_code != 200:
             print(f"❌ Error creating media container: {response.status_code}")
@@ -183,7 +178,7 @@ def publish_to_instagram(image_path, caption):
         publish_response = requests.post(publish_url, data=publish_data, timeout=30)
         
         print(f"   Status: {publish_response.status_code}")
-        print(f"   Response: {publish_response.text[:200]}")
+        print(f"   Response: {publish_response.text[:300]}")
         
         if publish_response.status_code == 200:
             publish_result = publish_response.json()
@@ -215,24 +210,6 @@ def publish_to_instagram(image_path, caption):
         return False
 
 
-def save_caption_backup(caption, image_path):
-    """Salva caption come backup per review manuale"""
-    temp_dir = Path(__file__).parent.parent / "temp"
-    temp_dir.mkdir(exist_ok=True)
-    
-    caption_file = temp_dir / "instagram_caption.txt"
-    
-    content = f"""Generated: {datetime.now().isoformat()}
-Caption:
-{caption}
-
-Image: {image_path}
-"""
-    
-    caption_file.write_text(content)
-    print(f"💾 Backup caption saved: {caption_file}")
-
-
 def main():
     """Main"""
     print("=" * 60)
@@ -248,25 +225,35 @@ def main():
         # 1. Genera caption
         caption = generate_caption(topic)
         
-        # 2. Crea immagine
-        image_path = f"/tmp/instagram_post_{now.strftime('%Y%m%d')}.png"
+        # 2. Crea immagine in docs/instagram/ (GitHub Pages)
+        repo_root = Path(__file__).parent.parent
+        instagram_dir = repo_root / "docs" / "instagram"
+        instagram_dir.mkdir(parents=True, exist_ok=True)
+        
+        image_filename = f"instagram_post_{now.strftime('%Y%m%d')}.png"
+        image_path = instagram_dir / image_filename
+        
         generate_image_with_text(
             title="Tech Blog",
             subtitle="Nuovo articolo",
-            output_path=image_path
+            output_path=str(image_path)
         )
         
-        # 3. Salva backup della caption
-        save_caption_backup(caption, image_path)
+        # 3. Crea URL pubblico (GitHub Pages)
+        # ⚠️ MODIFICA QUESTO CON IL TUO USERNAME/REPO
+        image_url = f"https://serpico3.github.io/Ai-site/instagram/{image_filename}"
+        
+        print(f"\n📍 Image URL for Instagram: {image_url}")
         
         # 4. Pubblica su Instagram
-        success = publish_to_instagram(image_path, caption)
+        success = publish_to_instagram(image_url, caption)
         
         if success:
             print("\n✅ Instagram post published successfully!")
         else:
-            print("\n⚠️ Instagram publishing failed, caption saved for manual review")
-            print(f"   Check: temp/instagram_caption.txt")
+            print("\n⚠️ Instagram publishing failed")
+            print(f"   Image file saved at: {image_path}")
+            print(f"   Will be available at: {image_url}")
         
         print("\n" + "=" * 60)
         print(f"✅ GENERATOR COMPLETED")
