@@ -1,32 +1,42 @@
-name: Generate Article
+name: Generate Article & Instagram Post
 
 on:
-  workflow_dispatch:
   schedule:
-    - cron: '0 14 * * *'
-
-permissions:
-  contents: write
+    - cron: '0 15 * * *'  # 15:00 CET
+  workflow_dispatch:
 
 jobs:
   generate:
     runs-on: ubuntu-latest
+    
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v3
       
-      - uses: actions/setup-python@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
         with:
           python-version: '3.11'
       
-      - run: pip install groq
+      - name: Install dependencies
+        run: |
+          pip install groq requests pillow
       
-      - env:
+      - name: Generate Article
+        env:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
         run: python scripts/generate_article.py
       
-      - run: |
-          git config user.name "Bot"
-          git config user.email "bot@example.com"
+      - name: Generate Instagram Post
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          INSTAGRAM_ACCESS_TOKEN: ${{ secrets.INSTAGRAM_ACCESS_TOKEN }}
+          INSTAGRAM_BUSINESS_ACCOUNT_ID: ${{ secrets.INSTAGRAM_BUSINESS_ACCOUNT_ID }}
+        run: python scripts/generate_instagram.py
+      
+      - name: Commit changes
+        run: |
+          git config user.name "Diego Bot"
+          git config user.email "diego@bot.local"
           git add -A
-          git commit -m "Article" || exit 0
+          git commit -m "🤖 Auto-generated: article + instagram post $(date +%Y-%m-%d)" --allow-empty
           git push
