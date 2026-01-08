@@ -2,12 +2,14 @@ name: Generate Article & Instagram Post
 
 on:
   schedule:
-    - cron: '0 15 * * *'  # 15:00 CET
+    - cron: '0 15 * * *'
   workflow_dispatch:
 
 jobs:
   generate:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write  # 🔑 AGGIUNGI QUESTA RIGA
     
     steps:
       - uses: actions/checkout@v3
