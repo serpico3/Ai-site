@@ -48,6 +48,7 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;op
 .meta{opacity:.8;font-size:.9rem;color:var(--muted)}
 .title{margin:8px 0 6px 0}
 footer{padding:24px 16px;border-top:1px solid var(--border);opacity:.95;text-align:center;background:var(--surface)}
+.footer-inner{max-width:980px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .tag{display:inline-block;background:var(--tag-bg);border:1px solid var(--tag-border);border-radius:999px;padding:2px 8px;margin-right:6px;font-size:.8rem}
 pre,code{background:#0a1610;border:1px solid var(--border);border-radius:6px;color:#bdfbd9}
 pre{padding:12px;overflow:auto}
@@ -66,4 +67,54 @@ pre{padding:12px;overflow:auto}
 /* Respect reduced motion */
 @media (prefers-reduced-motion: reduce){
   *{animation:none!important;transition:none!important}
+}
+
+/* Hero neon panel */
+.hero-wrap{margin:14px 0 10px}
+.hero-panel{position:relative;display:inline-block;padding:14px 20px;border-radius:12px;background:linear-gradient(180deg,#0e1f16,#0a1310);border:1px solid #1a3a2b;color:#bfffe0;box-shadow:0 0 0 1px rgba(36,255,138,.12), 0 8px 22px -10px rgba(36,255,138,.45), 0 0 18px rgba(36,255,138,.2) inset;letter-spacing:.08em;text-transform:uppercase;font-weight:800}
+.hero-panel.big{font-size:2.2rem;padding:18px 26px}
+.hero-panel::before,.hero-panel::after{content:"";position:absolute;inset:-6px;border-radius:16px;border:1px solid rgba(36,255,138,.25);filter:blur(2px);pointer-events:none}
+.hero-panel::after{inset:-12px;border-color:rgba(36,255,138,.12)}
+@keyframes flicker{0%,19%,21%,23%,80%,100%{opacity:1} 20%,22%{opacity:.5}}
+.hero-panel.flicker{animation:flicker 4s linear infinite}
+
+/* Two-column layout */
+.layout{display:grid;grid-template-columns:1fr;gap:18px}
+@media (min-width: 980px){.layout{grid-template-columns:2fr 1fr}}
+
+/* Panels */
+.panel{background:var(--surface-2);border:1px solid var(--border);border-radius:14px;padding:16px;box-shadow:inset 0 0 0 1px rgba(36,255,138,.03)}
+.panel h3{margin:0 0 10px 0}
+
+/* Trending */
+.trending .item{display:flex;gap:12px;align-items:center;padding:10px;border-radius:10px;border:1px solid var(--border);background:var(--surface);transition:background .2s}
+.trending .item + .item{margin-top:10px}
+.trending .thumb{width:84px;height:56px;border-radius:8px;object-fit:cover;border:1px solid var(--border);background:#040a06}
+.trending .meta{font-size:.85rem}
+.trending .title{margin:0 0 2px 0;font-size:1rem}
+
+/* Newsletter */
+.newsletter form{display:flex;gap:8px;flex-wrap:wrap}
+.input{flex:1 1 200px;background:#0a1610;border:1px solid var(--border);border-radius:10px;padding:10px 12px;color:var(--text)}
+.btn{background:linear-gradient(180deg,#1efc8a,#0de070);color:#00150a;border:none;border-radius:10px;padding:10px 14px;font-weight:700;box-shadow:0 6px 14px -8px rgba(36,255,138,.7);cursor:pointer;transition:transform .15s}
+.btn:hover{transform:translateY(-1px)}
+.btn:active{transform:translateY(0)}
+
+/* Read more button */
+.readmore{display:inline-block;margin-top:8px;padding:8px 12px;border-radius:9px;border:1px solid #1a3a2b;background:#0c1a13;color:var(--text);box-shadow:0 0 0 1px rgba(36,255,138,.08) inset}
+.readmore:hover{background:#0f2017}
+
+/* Brand chip logo */
+.chip-logo{width:28px;height:28px;vertical-align:middle;margin-right:10px;filter:drop-shadow(0 0 6px rgba(36,255,138,.35))}
+
+/* Social icons */
+.social{display:flex;align-items:center;gap:6px}
+.social a{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border:1px solid var(--border);border-radius:7px;background:#0c1a13;color:var(--text);box-shadow:0 0 0 1px rgba(36,255,138,.04) inset;transition:transform .15s, box-shadow .2s, border-color .2s}
+.social a:hover{transform:translateY(-1px);border-color:#245f3f;box-shadow:0 0 0 1px rgba(36,255,138,.18), 0 8px 16px -14px rgba(36,255,138,.28)}
+.social svg{width:12px;height:12px;display:block}
+
+@media (max-width: 640px){
+  .social{gap:4px}
+  .social a{width:20px;height:20px;border-radius:6px}
+  .social svg{width:10px;height:10px}
 }
