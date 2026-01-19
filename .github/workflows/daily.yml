@@ -46,7 +46,9 @@ jobs:
 
       - name: Generate daily article
         env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          IMAGE_API_URL: ${{ vars.IMAGE_API_URL }}
+          IMAGE_API_KEY: ${{ secrets.IMAGE_API_KEY }}
         run: |
           python scripts/generate_daily.py
 
@@ -61,4 +63,3 @@ jobs:
             git commit -m "chore: publish daily article [skip ci]"
             git push
           fi
-

@@ -813,6 +813,19 @@
         0.07217275525209421
       ],
       "topic": "LLM applicati: agenti, RAG e tool use: casi d'uso pratici"
+    },
+    {
+      "title": "Data engineering e data pipelines: errori comuni e come evitarli – guida rapida",
+      "summary": "Una panoramica pratica su Data engineering e data pipelines: errori comuni e come evitarli.",
+      "date": "2026-01-19",
+      "read_minutes": 3,
+      "tags": [
+        "tech",
+        "daily"
+      ],
+      "image": "assets/images/2026-01-19-data-engineering-e-data-pipelines-errori-comuni-e-come-evitarli-guida-rapida.png",
+      "path": "articles/2026-01-19-data-engineering-e-data-pipelines-errori-comuni-e-come-evitarli-guida-rapida.html",
+      "topic": "Data engineering e data pipelines: errori comuni e come evitarli"
     }
   ]
 }
