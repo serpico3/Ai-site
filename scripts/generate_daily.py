@@ -38,7 +38,9 @@ USER_PROMPT = (
     "8) Mini glossario (max 5 voci)\n"
     "9) Conclusione con recap\n"
     "Aggiungi esempi concreti (permessi Linux, backup, firewall, VLAN, logging, fail2ban, update policy).\n"
-    "Output SOLO JSON con campi: title, excerpt, tags, content_markdown.\n"
+    "Output SOLO JSON valido con campi: title, excerpt, tags, content_markdown.\n"
+    "Il JSON deve essere valido: nessun markdown, nessun backtick, nessuna riga extra.\n"
+    "Nel campo content_markdown usa \\n per i ritorni a capo (non inserire newline raw dentro le stringhe).\n"
     "content_markdown NON deve includere un titolo H1 (il titolo e separato).\n"
     "tags: 4-7 tag, minuscoli, con trattini, evita tag generici come tech o news.\n"
 )
@@ -137,17 +139,70 @@ def yaml_escape(value: str) -> str:
 
 
 def extract_json(text: str) -> dict:
+    candidate = extract_json_block(text)
     try:
-        return json.loads(text)
+        return json.loads(candidate)
     except Exception:
-        match = re.search(r"\{.*\}", text, re.S)
-        if not match:
-            raise ValueError("Risposta senza JSON valido")
-        return json.loads(match.group(0))
+        repaired = repair_json_text(candidate)
+        return json.loads(repaired)
+
+
+def extract_json_block(text: str) -> str:
+    if "```" in text:
+        match = re.search(r"```(?:json)?\s*(\{.*?\})\s*```", text, re.S | re.I)
+        if match:
+            return match.group(1).strip()
+    match = re.search(r"\{.*\}", text, re.S)
+    if not match:
+        raise ValueError("Risposta senza JSON valido")
+    return match.group(0).strip()
+
+
+def repair_json_text(text: str) -> str:
+    cleaned = (
+        text.replace("“", '"')
+        .replace("”", '"')
+        .replace("’", "'")
+        .replace("‘", "'")
+    )
+    cleaned = re.sub(r",\s*([}\]])", r"\1", cleaned)
+
+    out = []
+    in_string = False
+    escape = False
+    for ch in cleaned:
+        if in_string:
+            if escape:
+                out.append(ch)
+                escape = False
+                continue
+            if ch == "\\":
+                out.append(ch)
+                escape = True
+                continue
+            if ch == '"':
+                in_string = False
+                out.append(ch)
+                continue
+            if ch == "\n":
+                out.append("\\n")
+                continue
+            if ch == "\r":
+                continue
+            if ch == "\t":
+                out.append("\\t")
+                continue
+        else:
+            if ch == '"':
+                in_string = True
+                out.append(ch)
+                continue
+        out.append(ch)
+    return "".join(out)
 
 
 def default_cover_image() -> str:
-    preferred = os.getenv("DEFAULT_COVER_IMAGE", "assets/images/pcb-bg.png")
+    preferred = os.getenv("DEFAULT_COVER_IMAGE") or "assets/images/pcb-bg.png"
     if (ROOT / preferred).exists():
         return preferred
     return "assets/images/chip.svg"
@@ -224,14 +279,14 @@ def main():
     topic = pick_topic(topics, log.get("entries", []))
 
     dry_run = os.getenv("DRY_RUN", "false").lower() == "true"
-    text_model = os.getenv("PERPLEXITY_TEXT_MODEL", "sonar-pro")
+    text_model = os.getenv("PERPLEXITY_TEXT_MODEL") or "sonar-pro"
     fallback_models = [
         m.strip()
-        for m in os.getenv("PERPLEXITY_FALLBACK_MODELS", "sonar").split(",")
+        for m in (os.getenv("PERPLEXITY_FALLBACK_MODELS") or "sonar").split(",")
         if m.strip()
     ]
     try:
-        max_tokens = int(os.getenv("PERPLEXITY_MAX_TOKENS", "1800"))
+        max_tokens = int(os.getenv("PERPLEXITY_MAX_TOKENS") or "1800")
     except ValueError:
         max_tokens = 1800
 
