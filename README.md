@@ -27,7 +27,16 @@ Questo progetto crea e pubblica automaticamente, ogni giorno alle 15:00, un arti
 - `python scripts/generate_daily.py` genera un nuovo articolo, immagine e aggiorna l'index.
 
 ## Pianificazione (15:00 ogni giorno)
-Esegui in PowerShell (modalità amministratore consigliata se richiesto dai criteri di esecuzione):
+
+### Opzione consigliata: GitHub Actions
+Esegui automaticamente nel repo remoto con una Secret:
+
+- Aggiungi la secret `OPENAI_API_KEY` nel repository (Settings → Secrets and variables → Actions → New repository secret).
+- Il workflow `.github/workflows/daily.yml` fa partire la generazione ogni giorno alle 15:00 (Europe/Rome) e fa push dei file statici.
+- Puoi forzare l'esecuzione anche da `Actions → Daily Publish → Run workflow`.
+
+### Opzione locale (Windows Task Scheduler)
+Se preferisci eseguire in locale:
 
 ```
 scripts\\register_task.ps1 -Time "15:00"
@@ -58,4 +67,3 @@ Il sistema confronta gli embedding (titolo+riassunto) dei candidati con i post g
 
 ## Deployment
 Se `GIT_AUTO_COMMIT=true` e c'è un remoto `origin`, al termine della generazione esegue `git add/commit/push`. Puoi usare GitHub Pages o un hosting statico a tua scelta.
-
