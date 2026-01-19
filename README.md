@@ -27,6 +27,8 @@ Questo progetto genera un blog tech statico con estetica PCB e pubblica automati
 2. Copia `.env.example` in `.env` e configura:
    - `PERPLEXITY_API_KEY`
    - `PERPLEXITY_TEXT_MODEL` (default `sonar-pro`)
+   - `PERPLEXITY_FALLBACK_MODELS` (default `sonar`)
+   - `PERPLEXITY_MAX_TOKENS` (default `1800`)
    - `DEFAULT_COVER_IMAGE` (default `assets/images/pcb-bg.png`)
    - `SITE_BASE_URL`
 3. Genera articolo e build:
@@ -40,7 +42,7 @@ Questo progetto genera un blog tech statico con estetica PCB e pubblica automati
 ## Automazione con GitHub Actions
 Configura:
 - Secret `PERPLEXITY_API_KEY`
-- Vars `PERPLEXITY_TEXT_MODEL`, `SITE_BASE_URL`
+- Vars `PERPLEXITY_TEXT_MODEL`, `PERPLEXITY_FALLBACK_MODELS`, `PERPLEXITY_MAX_TOKENS`, `SITE_BASE_URL`
 
 Il workflow `.github/workflows/daily.yml` esegue la generazione e il build giornaliero.
 

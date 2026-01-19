@@ -153,7 +153,13 @@ def default_cover_image() -> str:
     return "assets/images/chip.svg"
 
 
-def generate_with_perplexity(model: str, system_prompt: str, user_prompt: str) -> dict:
+def generate_with_perplexity(
+    model: str,
+    system_prompt: str,
+    user_prompt: str,
+    fallback_models: List[str],
+    max_tokens: int,
+) -> dict:
     key = os.getenv("PERPLEXITY_API_KEY")
     if not key:
         raise RuntimeError("PERPLEXITY_API_KEY mancante. Configura .env o secrets.")
@@ -162,26 +168,49 @@ def generate_with_perplexity(model: str, system_prompt: str, user_prompt: str) -
         "Authorization": f"Bearer {key}",
         "Content-Type": "application/json",
     }
-    payload = {
-        "model": model,
-        "messages": [
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_prompt},
-        ],
-        "temperature": 0.7,
-    }
-    resp = requests.post(
-        "https://api.perplexity.ai/chat/completions",
-        headers=headers,
-        json=payload,
-        timeout=90,
-    )
-    if resp.status_code == 429:
-        raise RuntimeError("rate limit")
-    resp.raise_for_status()
-    data = resp.json()
-    content = data["choices"][0]["message"]["content"]
-    return extract_json(content)
+    def is_model_error(message: str) -> bool:
+        msg = message.lower()
+        return "model" in msg and ("invalid" in msg or "not found" in msg or "does not exist" in msg)
+
+    models = [model] + [m for m in fallback_models if m and m != model]
+    last_error = None
+
+    for candidate in models:
+        payload = {
+            "model": candidate,
+            "messages": [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt},
+            ],
+            "temperature": 0.7,
+            "max_tokens": max_tokens,
+        }
+        resp = requests.post(
+            "https://api.perplexity.ai/chat/completions",
+            headers=headers,
+            json=payload,
+            timeout=90,
+        )
+        if resp.status_code == 429:
+            raise RuntimeError("rate limit")
+
+        if resp.ok:
+            data = resp.json()
+            content = data["choices"][0]["message"]["content"]
+            return extract_json(content)
+
+        try:
+            data = resp.json()
+            error_message = data.get("error", {}).get("message", "")
+        except Exception:
+            error_message = resp.text.strip()
+
+        last_error = f"{resp.status_code}: {error_message or resp.text.strip()}"
+        if resp.status_code == 400 and is_model_error(error_message):
+            continue
+        raise RuntimeError(f"Perplexity error: {last_error}")
+
+    raise RuntimeError(f"Perplexity error: {last_error}")
 
 
 def main():
@@ -196,6 +225,15 @@ def main():
 
     dry_run = os.getenv("DRY_RUN", "false").lower() == "true"
     text_model = os.getenv("PERPLEXITY_TEXT_MODEL", "sonar-pro")
+    fallback_models = [
+        m.strip()
+        for m in os.getenv("PERPLEXITY_FALLBACK_MODELS", "sonar").split(",")
+        if m.strip()
+    ]
+    try:
+        max_tokens = int(os.getenv("PERPLEXITY_MAX_TOKENS", "1800"))
+    except ValueError:
+        max_tokens = 1800
 
     if dry_run:
         article = {
@@ -210,6 +248,8 @@ def main():
                 text_model,
                 SYSTEM_PROMPT,
                 USER_PROMPT.format(topic=topic),
+                fallback_models,
+                max_tokens,
             )
         except Exception as exc:
             if is_quota_error(exc):
