@@ -35,13 +35,35 @@ body::before {
   position: fixed;
   inset: 0;
   z-index: -1;
-  opacity: 0.32;
-  background:
+  opacity: 0.55;
+  background-image:
+    linear-gradient(rgba(4, 9, 6, 0.75), rgba(4, 9, 6, 0.75)),
+    url("images/pcb-bg.png"),
     radial-gradient(1100px 540px at 85% -15%, rgba(60, 255, 143, 0.15), transparent 70%),
     radial-gradient(840px 420px at -10% 25%, rgba(60, 255, 143, 0.08), transparent 70%),
     linear-gradient(90deg, rgba(25, 48, 35, 0.26) 1px, transparent 1px),
     linear-gradient(rgba(25, 48, 35, 0.26) 1px, transparent 1px);
-  background-size: 140px 140px, 140px 140px, 120px 120px, 120px 120px;
+  background-size:
+    cover,
+    cover,
+    140px 140px,
+    140px 140px,
+    120px 120px,
+    120px 120px;
+  background-position:
+    center,
+    center,
+    85% -15%,
+    -10% 25%,
+    0 0,
+    0 0;
+  background-repeat:
+    no-repeat,
+    no-repeat,
+    no-repeat,
+    no-repeat,
+    repeat,
+    repeat;
   filter: blur(0.2px);
 }
 

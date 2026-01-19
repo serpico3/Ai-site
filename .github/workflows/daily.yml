@@ -46,9 +46,8 @@ jobs:
 
       - name: Generate daily article
         env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          OPENAI_TEXT_MODEL: ${{ vars.OPENAI_TEXT_MODEL }}
-          OPENAI_IMAGE_MODEL: ${{ vars.OPENAI_IMAGE_MODEL }}
+          PERPLEXITY_API_KEY: ${{ secrets.PERPLEXITY_API_KEY }}
+          PERPLEXITY_TEXT_MODEL: ${{ vars.PERPLEXITY_TEXT_MODEL }}
           SITE_BASE_URL: ${{ vars.SITE_BASE_URL }}
           RUN_BUILD: "false"
         run: |

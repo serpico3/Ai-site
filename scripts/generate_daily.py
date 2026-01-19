@@ -1,5 +1,3 @@
-import base64
-import io
 import json
 import os
 import random
@@ -11,13 +9,11 @@ from pathlib import Path
 from typing import List
 
 from dotenv import load_dotenv
-from openai import OpenAI
-from PIL import Image
+import requests
 
 
 ROOT = Path(__file__).resolve().parents[1]
 CONTENT_DIR = ROOT / "content" / "posts"
-IMAGES_DIR = ROOT / "assets" / "images"
 TOPICS_PATH = ROOT / "data" / "topics.json"
 LOG_PATH = ROOT / "data" / "generated_log.json"
 
@@ -45,12 +41,6 @@ USER_PROMPT = (
     "Output SOLO JSON con campi: title, excerpt, tags, content_markdown.\n"
     "content_markdown NON deve includere un titolo H1 (il titolo e separato).\n"
     "tags: 4-7 tag, minuscoli, con trattini, evita tag generici come tech o news.\n"
-)
-
-IMAGE_PROMPT = (
-    "Realistic PCB background, dark green and black palette, "
-    "thin traces, pads, vias, soft blur, professional and clean. "
-    "No text, no logos, no people."
 )
 
 BAD_TAGS = {"tech", "news", "blog", "articolo", "ai", "software", "informatica"}
@@ -137,13 +127,6 @@ def ensure_unique_slug(base_slug: str) -> str:
     return candidate
 
 
-def create_placeholder_image() -> bytes:
-    img = Image.new("RGB", (1024, 576), color=(10, 20, 15))
-    buf = io.BytesIO()
-    img.save(buf, format="WEBP", quality=80)
-    return buf.getvalue()
-
-
 def is_quota_error(exc: Exception) -> bool:
     text = str(exc).lower()
     return "insufficient_quota" in text or "rate limit" in text or "429" in text
@@ -153,10 +136,57 @@ def yaml_escape(value: str) -> str:
     return value.replace("\\", "\\\\").replace('"', '\\"')
 
 
+def extract_json(text: str) -> dict:
+    try:
+        return json.loads(text)
+    except Exception:
+        match = re.search(r"\{.*\}", text, re.S)
+        if not match:
+            raise ValueError("Risposta senza JSON valido")
+        return json.loads(match.group(0))
+
+
+def default_cover_image() -> str:
+    preferred = os.getenv("DEFAULT_COVER_IMAGE", "assets/images/pcb-bg.png")
+    if (ROOT / preferred).exists():
+        return preferred
+    return "assets/images/chip.svg"
+
+
+def generate_with_perplexity(model: str, system_prompt: str, user_prompt: str) -> dict:
+    key = os.getenv("PERPLEXITY_API_KEY")
+    if not key:
+        raise RuntimeError("PERPLEXITY_API_KEY mancante. Configura .env o secrets.")
+
+    headers = {
+        "Authorization": f"Bearer {key}",
+        "Content-Type": "application/json",
+    }
+    payload = {
+        "model": model,
+        "messages": [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt},
+        ],
+        "temperature": 0.7,
+    }
+    resp = requests.post(
+        "https://api.perplexity.ai/chat/completions",
+        headers=headers,
+        json=payload,
+        timeout=90,
+    )
+    if resp.status_code == 429:
+        raise RuntimeError("rate limit")
+    resp.raise_for_status()
+    data = resp.json()
+    content = data["choices"][0]["message"]["content"]
+    return extract_json(content)
+
+
 def main():
     load_dotenv(ROOT / ".env")
     CONTENT_DIR.mkdir(parents=True, exist_ok=True)
-    IMAGES_DIR.mkdir(parents=True, exist_ok=True)
 
     topics = load_topics()
     log = load_log()
@@ -165,8 +195,7 @@ def main():
     topic = pick_topic(topics, log.get("entries", []))
 
     dry_run = os.getenv("DRY_RUN", "false").lower() == "true"
-    text_model = os.getenv("OPENAI_TEXT_MODEL", "gpt-4o-mini")
-    image_model = os.getenv("OPENAI_IMAGE_MODEL", "gpt-image-1")
+    text_model = os.getenv("PERPLEXITY_TEXT_MODEL", "sonar-pro")
 
     if dry_run:
         article = {
@@ -175,42 +204,16 @@ def main():
             "tags": ["linux", "sysadmin", "backup", "hardening"],
             "content_markdown": "## Introduzione\nContenuto di test.",
         }
-        image_bytes = create_placeholder_image()
     else:
-        if not os.getenv("OPENAI_API_KEY"):
-            raise RuntimeError("OPENAI_API_KEY mancante. Configura .env o secrets.")
-        client = OpenAI()
         try:
-            response = client.chat.completions.create(
-                model=text_model,
-                messages=[
-                    {"role": "system", "content": SYSTEM_PROMPT},
-                    {"role": "user", "content": USER_PROMPT.format(topic=topic)},
-                ],
-                response_format={"type": "json_object"},
-                temperature=0.7,
+            article = generate_with_perplexity(
+                text_model,
+                SYSTEM_PROMPT,
+                USER_PROMPT.format(topic=topic),
             )
-            article = json.loads(response.choices[0].message.content)
         except Exception as exc:
             if is_quota_error(exc):
-                print("Quota OpenAI esaurita. Nessun articolo pubblicato.")
-                sys.exit(0)
-            raise
-
-        try:
-            image_response = client.images.generate(
-                model=image_model,
-                prompt=IMAGE_PROMPT,
-                size="1024x576",
-                response_format="b64_json",
-            )
-            image_b64 = getattr(image_response.data[0], "b64_json", None)
-            if not image_b64:
-                raise RuntimeError("Risposta immagini senza b64_json")
-            image_bytes = base64.b64decode(image_b64)
-        except Exception as exc:
-            if is_quota_error(exc):
-                print("Quota immagini OpenAI esaurita. Nessuna pubblicazione.")
+                print("Quota Perplexity esaurita. Nessun articolo pubblicato.")
                 sys.exit(0)
             raise
 
@@ -228,15 +231,7 @@ def main():
     date_str = datetime.now(timezone.utc).strftime("%Y-%m-%d")
     slug = ensure_unique_slug(slugify(title))
 
-    image_name = f"{date_str}-{slug}.webp"
-    image_path = IMAGES_DIR / image_name
-
-    if not dry_run:
-        img = Image.open(io.BytesIO(image_bytes))
-        img = img.convert("RGB")
-        img.save(image_path, format="WEBP", quality=82, method=6)
-    else:
-        image_path.write_bytes(image_bytes)
+    cover_image = default_cover_image()
 
     content_file = CONTENT_DIR / f"{date_str}-{slug}.md"
     safe_title = yaml_escape(title)
@@ -254,7 +249,7 @@ def main():
         [
             f'slug: "{safe_slug}"',
             f'excerpt: "{safe_excerpt}"',
-            f'cover_image: "assets/images/{image_name}"',
+            f'cover_image: "{cover_image}"',
             'author: "Diego"',
             "---",
             "",
@@ -268,7 +263,7 @@ def main():
     if os.getenv("RUN_BUILD", "true").lower() == "true":
         subprocess.run([sys.executable, str(ROOT / "scripts" / "build_site.py")], check=True)
 
-    print(json.dumps({"created": content_file.name, "image": image_name}, ensure_ascii=False, indent=2))
+    print(json.dumps({"created": content_file.name, "image": cover_image}, ensure_ascii=False, indent=2))
 
 
 if __name__ == "__main__":
