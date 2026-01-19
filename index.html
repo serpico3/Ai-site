@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Blog Tech</title>
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+  <header>
+    <main>
+      <h1 style="margin:0">Blog Tech – 5 minuti al giorno</h1>
+      <p class="meta">Nuovi articoli ogni giorno alle 15:00</p>
+    </main>
+  </header>
+  <main id="content">
+    <div id="posts"></div>
+  </main>
+  <footer>
+    Generato automaticamente con OpenAI • <a href="https://github.com/Diego/Ai-site">Repository</a>
+  </footer>
+  <script>
+  fetch('data/posts.json?_=' + Date.now()).then(r=>r.json()).then(data=>{
+    const c=document.getElementById('posts');
+    data.posts.sort((a,b)=>b.date.localeCompare(a.date));
+    for(const p of data.posts){
+      const el=document.createElement('article');
+      el.className='post';
+      el.innerHTML=`
+        <a href="${p.path}">
+          <img src="${p.image}" alt="${p.title}">
+        </a>
+        <h2 class="title"><a href="${p.path}">${p.title}</a></h2>
+        <div class="meta">${new Date(p.date).toLocaleDateString('it-IT')} · ${p.read_minutes} min</div>
+        <p>${p.summary}</p>
+        <div>${(p.tags||[]).map(t=>`<span class='tag'>${t}</span>`).join('')}</div>
+      `;
+      c.appendChild(el);
+    }
+  }).catch(()=>{
+    document.getElementById('posts').innerHTML='<p>Nessun articolo ancora. Torna più tardi!</p>'
+  })
+  </script>
+</body>
+</html>
+
