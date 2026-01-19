@@ -9,15 +9,18 @@
 <body>
   <header>
     <main>
-      <h1 style="margin:0">Blog Tech – 5 minuti al giorno</h1>
-      <p class="meta">Nuovi articoli ogni giorno alle 15:00</p>
+      <div class="topbar">
+        <h1 class="brand" style="margin:0">Blog Tech</h1>
+        <nav class="nav"><a href="index.html">Home</a><a href="chi-siamo.html">Chi Siamo</a></nav>
+      </div>
+      <p class="hero">Nuovi articoli tech, 5 minuti al giorno – di Diego Serpelloni</p>
     </main>
   </header>
   <main id="content">
     <div id="posts"></div>
   </main>
   <footer>
-    Generato automaticamente con OpenAI • <a href="https://github.com/Diego/Ai-site">Repository</a>
+    Scritto e curato da Diego Serpelloni • <a href="chi-siamo.html">Chi siamo</a>
   </footer>
   <script>
   fetch('data/posts.json?_=' + Date.now()).then(r=>r.json()).then(data=>{
@@ -43,4 +46,3 @@
   </script>
 </body>
 </html>
-

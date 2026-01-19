@@ -1,12 +1,28 @@
-body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;line-height:1.6;margin:0;background:#0b0f14;color:#e6edf3}
-a{color:#6ab0ff;text-decoration:none}a:hover{text-decoration:underline}
-header{padding:24px 16px;border-bottom:1px solid #1f2a36;background:#0d1117}
-main{max-width:860px;margin:0 auto;padding:24px 16px}
-.post{background:#0d1117;border:1px solid #1f2a36;border-radius:10px;padding:16px;margin:16px 0}
-.post img{width:100%;border-radius:8px}
+:root{
+  --bg:#f5f9ff;
+  --surface:#ffffff;
+  --border:#e2ecf9;
+  --text:#0c294a;
+  --muted:#5a6b7f;
+  --accent:#2a8cff;
+  --accent-2:#e8f2ff;
+  --tag-bg:#eef6ff;
+  --tag-border:#cfe5ff;
+}
+body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;line-height:1.6;margin:0;background:var(--bg);color:var(--text)}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+header{padding:24px 16px;border-bottom:1px solid var(--border);background:var(--surface)}
+main{max-width:920px;margin:0 auto;padding:24px 16px}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{margin:0;font-size:1.6rem}
+.nav a{margin-left:14px;color:var(--text);opacity:.8}
+.nav a:hover{opacity:1;color:var(--accent)}
+.hero{margin-top:6px;color:var(--muted)}
+.post{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;margin:16px 0;box-shadow:0 1px 0 rgba(12,41,74,.03)}
+.post img{width:100%;border-radius:10px}
 .meta{opacity:.75;font-size:.9rem}
-.title{margin:0 0 8px 0}
-footer{padding:24px 16px;border-top:1px solid #1f2a36;opacity:.8;text-align:center}
-.tag{display:inline-block;background:#152233;border:1px solid #1f2a36;border-radius:999px;padding:2px 8px;margin-right:6px;font-size:.8rem}
-pre,code{background:#0b0f14;border:1px solid #1f2a36;border-radius:6px}
+.title{margin:8px 0 6px 0}
+footer{padding:24px 16px;border-top:1px solid var(--border);opacity:.9;text-align:center;background:var(--surface)}
+.tag{display:inline-block;background:var(--tag-bg);border:1px solid var(--tag-border);border-radius:999px;padding:2px 8px;margin-right:6px;font-size:.8rem}
+pre,code{background:#f0f6ff;border:1px solid var(--border);border-radius:6px;color:#0c294a}
 pre{padding:12px;overflow:auto}

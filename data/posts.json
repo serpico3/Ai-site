@@ -826,6 +826,20 @@
       "image": "assets/images/2026-01-19-data-engineering-e-data-pipelines-errori-comuni-e-come-evitarli-guida-rapida.png",
       "path": "articles/2026-01-19-data-engineering-e-data-pipelines-errori-comuni-e-come-evitarli-guida-rapida.html",
       "topic": "Data engineering e data pipelines: errori comuni e come evitarli"
+    },
+    {
+      "title": "Ingegneria del software: testing, CI/CD, DevOps: strumenti essenziali – guida rapida",
+      "summary": "Una panoramica pratica su Ingegneria del software: testing, CI/CD, DevOps: strumenti essenziali.",
+      "date": "2026-01-19",
+      "read_minutes": 3,
+      "author": "Diego Serpelloni",
+      "tags": [
+        "tech",
+        "daily"
+      ],
+      "image": "assets/images/2026-01-19-ingegneria-del-software-testing-cicd-devops-strumenti-essenziali-guida-rapida.png",
+      "path": "articles/2026-01-19-ingegneria-del-software-testing-cicd-devops-strumenti-essenziali-guida-rapida.html",
+      "topic": "Ingegneria del software: testing, CI/CD, DevOps: strumenti essenziali"
     }
   ]
 }
