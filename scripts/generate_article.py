@@ -8,19 +8,24 @@ import sys
 import re
 from datetime import datetime
 from pathlib import Path
+from typing import Tuple
+
+try:
+    from openai import OpenAI  # type: ignore
+except Exception:
+    OpenAI = None  # Deferred import error until runtime
 
 
-def generate_article():
-    """Genera articolo usando Groq."""
-    from groq import Groq
-
-    print("Connessione a Groq in corso...")
-    api_key = os.environ.get("GROQ_API_KEY")
+def generate_article() -> str:
+    """Genera articolo usando OpenAI (chat completions)."""
+    print("Connessione a OpenAI in corso...")
+    api_key = os.environ.get("OPENAI_API_KEY")
     if not api_key:
-        raise ValueError("GROQ_API_KEY non trovata")
-    print(f"API Key trovata: {api_key[:12]}...")
+        raise ValueError("OPENAI_API_KEY non trovata (configura un secret)")
+    if OpenAI is None:
+        raise RuntimeError("openai SDK non installato. Aggiungi 'openai' alle dipendenze.")
 
-    client = Groq(api_key=api_key)
+    client = OpenAI(api_key=api_key)
     now = datetime.now()
     print(f"Data: {now.strftime('%Y-%m-%d %H:%M')}")
 
@@ -63,17 +68,17 @@ Scrivi SOLO il contenuto dell'articolo, senza testo extra."""
 
     print("Generazione articolo...")
     chat_completion = client.chat.completions.create(
+        model="gpt-4o-mini",
         messages=[{"role": "user", "content": prompt}],
-        model="llama-3.3-70b-versatile",
         max_tokens=1800,
         temperature=0.8,
     )
-    content = chat_completion.choices[0].message.content
+    content = chat_completion.choices[0].message.content or ""
     print(f"Articolo generato ({len(content)} caratteri)")
     return content
 
 
-def create_html_article(markdown_content: str, timestamp: datetime):
+def create_html_article(markdown_content: str, timestamp: datetime) -> Tuple[str, str, str]:
     """Converte markdown (ridotto) in HTML con stile coerente."""
     lines = markdown_content.split("\n")
     title = ""
@@ -376,4 +381,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

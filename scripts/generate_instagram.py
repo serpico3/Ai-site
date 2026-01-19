@@ -19,11 +19,17 @@ from typing import Optional, Tuple
 
 import requests
 from PIL import Image, ImageDraw, ImageFont
+import base64
+
+try:
+    from openai import OpenAI  # type: ignore
+except Exception:
+    OpenAI = None
 
 
 def generate_image_with_text(title: str, subtitle: str, output_path: str) -> str:
     """Create a 1080x1080 image suitable for Instagram posts."""
-    print(f"🖼️ Creating image: {output_path}")
+    print(f"Creating image: {output_path}")
 
     img = Image.new('RGB', (1080, 1080), color=(5, 7, 10))
     draw = ImageDraw.Draw(img)
@@ -39,9 +45,9 @@ def generate_image_with_text(title: str, subtitle: str, output_path: str) -> str
     try:
         title_font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 60)
         subtitle_font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 40)
-        print("✅ System fonts loaded")
+        print("System fonts loaded")
     except Exception as e:
-        print(f"⚠️ System fonts not found: {e}, using default")
+        print(f"System fonts not found: {e}, using default")
         title_font = ImageFont.load_default()
         subtitle_font = ImageFont.load_default()
 
@@ -64,21 +70,52 @@ def generate_image_with_text(title: str, subtitle: str, output_path: str) -> str
     draw.text((x, y_offset), subtitle, fill=(66, 179, 255), font=subtitle_font)
 
     img.save(output_path)
-    print(f"✅ Image saved: {output_path}")
+    print(f"Image saved: {output_path}")
     return output_path
 
 
+def generate_image_with_openai(topic: str, output_path: str) -> str:
+    """Try generating an on-brand AI image via OpenAI; fallback to text rendering."""
+    api_key = os.environ.get("OPENAI_API_KEY")
+    if not api_key or OpenAI is None:
+        print("OPENAI unavailable; fallback to Pillow image.")
+        return generate_image_with_text(title="Tech Blog", subtitle=topic[:28], output_path=output_path)
+
+    client = OpenAI(api_key=api_key)
+    prompt = (
+        "Poster minimale per Instagram 1080x1080, palette bordeaux (8A1538), "
+        "tema tecnologia/networking/devops. Sfondo scuro elegante, titolo grande 'Tech Blog' "
+        f"e accenno al tema: {topic}. Nessun logo, nessun testo extra superfluo."
+    )
+    print("Generating AI image (OpenAI)...")
+    try:
+        result = client.images.generate(
+            model="gpt-image-1",
+            prompt=prompt,
+            size="1024x1024",
+            quality="standard",
+        )
+        b64 = result.data[0].b64_json
+        data = base64.b64decode(b64)
+        with open(output_path, "wb") as f:
+            f.write(data)
+        print(f"AI image saved: {output_path}")
+        return output_path
+    except Exception as e:
+        print(f"OpenAI image generation failed: {e}; using fallback.")
+        return generate_image_with_text(title="Tech Blog", subtitle=topic[:28], output_path=output_path)
+
+
 def generate_caption(topic: str) -> str:
-    """Generate Instagram caption using Groq API."""
-    from groq import Groq
-
-    print("📝 Generating caption...")
-    api_key = os.environ.get("GROQ_API_KEY")
+    """Generate Instagram caption using OpenAI."""
+    print("Generating caption...")
+    api_key = os.environ.get("OPENAI_API_KEY")
     if not api_key:
-        raise ValueError("Missing GROQ_API_KEY")
-    print(f"✅ GROQ_API_KEY: {api_key[:10]}...")
+        raise ValueError("Missing OPENAI_API_KEY")
+    if OpenAI is None:
+        raise RuntimeError("openai SDK non installato. Aggiungi 'openai' alle dipendenze.")
 
-    client = Groq(api_key=api_key)
+    client = OpenAI(api_key=api_key)
 
     prompt = f"""Sei Diego Serpelloni, 22 anni, tech enthusiast.
 
@@ -95,14 +132,13 @@ REQUISITI:
 Scrivi SOLO la caption, niente altro."""
 
     response = client.chat.completions.create(
+        model="gpt-4o-mini",
         messages=[{"role": "user", "content": prompt}],
-        model="llama-3.3-70b-versatile",
         max_tokens=300,
-        temperature=0.7,
+        temperature=0.8,
     )
-
-    caption = response.choices[0].message.content.strip()
-    print(f"✅ Caption generated ({len(caption)} chars)")
+    caption = (response.choices[0].message.content or "").strip()
+    print(f"Caption generated ({len(caption)} chars)")
     print(f"   Preview: {caption[:80]}...")
     return caption
 
@@ -117,7 +153,7 @@ def save_post_metadata(caption: str, image_filename: str) -> Path:
     meta = {"caption": caption, "image_filename": image_filename}
     meta_path = temp_dir / "instagram_post.json"
     meta_path.write_text(json.dumps(meta, ensure_ascii=False, indent=2), encoding="utf-8")
-    print(f"💾 Saved metadata: {meta_path}")
+    print(f"Saved metadata: {meta_path}")
     return meta_path
 
 
@@ -135,21 +171,21 @@ def publish_to_instagram(image_url: str, caption: str) -> bool:
 
     Uses graph.facebook.com endpoints as per API docs.
     """
-    print("\n=== 📤 Publishing to Instagram ===")
+    print("\n=== Publishing to Instagram ===")
 
     access_token = os.environ.get("INSTAGRAM_ACCESS_TOKEN")
     business_account_id = os.environ.get("INSTAGRAM_BUSINESS_ACCOUNT_ID")
     if not access_token or not business_account_id:
-        print("❌ Missing INSTAGRAM_ACCESS_TOKEN or INSTAGRAM_BUSINESS_ACCOUNT_ID")
+        print("? Missing INSTAGRAM_ACCESS_TOKEN or INSTAGRAM_BUSINESS_ACCOUNT_ID")
         return False
 
-    print(f"🔐 TOKEN: {access_token[:10]}...")
-    print(f"👤 IG_USER_ID: {business_account_id}")
-    print(f"🖼️ Image URL: {image_url}")
+    print(f"?? TOKEN: {access_token[:10]}...")
+    print(f"?? IG_USER_ID: {business_account_id}")
+    print(f"??? Image URL: {image_url}")
 
     try:
         # Step 1: Create media container
-        print("🧰 Step 1: Creating media container...")
+        print("?? Step 1: Creating media container...")
         container_url = f"https://graph.facebook.com/v18.0/{business_account_id}/media"
         payload = {
             'image_url': image_url,
@@ -160,33 +196,33 @@ def publish_to_instagram(image_url: str, caption: str) -> bool:
         print(f"   Status: {response.status_code}")
         print(f"   Response: {response.text[:300]}")
         if response.status_code != 200:
-            print(f"❌ Error creating media container: {response.status_code}")
+            print(f"? Error creating media container: {response.status_code}")
             print(f"   Full response: {response.text}")
             return False
         result = response.json()
         if 'error' in result or 'id' not in result:
-            print(f"❌ API Error: {result}")
+            print(f"? API Error: {result}")
             return False
         media_id = result['id']
-        print(f"✅ Media container created: {media_id}")
+        print(f"? Media container created: {media_id}")
 
         # Step 2: Publish media
-        print("🚀 Step 2: Publishing media...")
+        print("?? Step 2: Publishing media...")
         publish_url = f"https://graph.facebook.com/v18.0/{business_account_id}/media_publish"
         publish_data = {'creation_id': media_id, 'access_token': access_token}
         publish_response = requests.post(publish_url, data=publish_data, timeout=30)
         print(f"   Status: {publish_response.status_code}")
         print(f"   Response: {publish_response.text[:300]}")
         if publish_response.status_code != 200:
-            print(f"❌ Error publishing: {publish_response.status_code}")
+            print(f"Error publishing: {publish_response.status_code}")
             print(f"   Response: {publish_response.text}")
             return False
         publish_result = publish_response.json()
         if 'id' not in publish_result:
-            print(f"❌ No post ID in response: {publish_result}")
+            print(f"No post ID in response: {publish_result}")
             return False
         post_id = publish_result['id']
-        print(f"🎉 Post published! IG media id: {post_id}")
+        print(f"Post published! IG media id: {post_id}")
 
         # Step 3: Fetch permalink for convenience
         try:
@@ -195,20 +231,20 @@ def publish_to_instagram(image_url: str, caption: str) -> bool:
             if pr.status_code == 200:
                 link = pr.json().get('permalink')
                 if link:
-                    print(f"🔗 Permalink: {link}")
+                    print(f"Permalink: {link}")
         except Exception:
             pass
 
         return True
 
     except requests.exceptions.Timeout:
-        print("❌ Request timeout (Instagram API took too long)")
+        print("Request timeout (Instagram API took too long)")
         return False
     except requests.exceptions.ConnectionError:
-        print("❌ Connection error (network issue)")
+        print("Connection error (network issue)")
         return False
     except Exception as e:
-        print(f"❌ Unexpected error: {e}")
+        print(f"Unexpected error: {e}")
         import traceback
         traceback.print_exc()
         return False
@@ -239,7 +275,7 @@ def main():
     - publish: publish using saved metadata and raw.githubusercontent.com URL
     """
     print("=" * 60)
-    print("📷 Instagram Post Generator")
+    print("Instagram Post Generator")
     print("=" * 60)
 
     mode = (sys.argv[1] if len(sys.argv) > 1 else "prepare").lower()
@@ -257,13 +293,10 @@ def main():
 
             image_filename = f"instagram_post_{now.strftime('%Y%m%d')}.png"
             image_path = instagram_dir / image_filename
-            generate_image_with_text(
-                title="Tech Blog",
-                subtitle="Nuovo articolo",
-                output_path=str(image_path)
-            )
+            # Try AI image first; fallback to text-based image
+            generate_image_with_openai(topic=topic, output_path=str(image_path))
             save_post_metadata(caption, image_filename)
-            print("\n✅ Prepared IG assets (no publish in this step)")
+            print("\n? Prepared IG assets (no publish in this step)")
             print(f"   Image: {image_path}")
             print(f"   Caption: temp/instagram_caption.txt")
 
@@ -277,13 +310,13 @@ def main():
             image_url = build_raw_github_url(repo, image_filename)
             print(f"Will publish with image URL: {image_url}")
             if not wait_for_url(image_url, timeout_sec=90):
-                print("⚠️ Raw image URL not yet available; attempting publish anyway.")
+                print("Raw image URL not yet available; attempting publish anyway.")
 
             success = publish_to_instagram(image_url, caption)
             if success:
-                print("\n✅ Instagram post published successfully!")
+                print("\nInstagram post published successfully!")
             else:
-                print("\n❌ Instagram publishing failed")
+                print("\nInstagram publishing failed")
                 print(f"   Tried URL: {image_url}")
 
         else:
@@ -294,7 +327,7 @@ def main():
         print("=" * 60)
 
     except Exception as e:
-        print(f"\n❌ FATAL ERROR: {str(e)}")
+        print(f"\nFATAL ERROR: {str(e)}")
         import traceback
         traceback.print_exc()
         sys.exit(1)
@@ -302,4 +335,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
