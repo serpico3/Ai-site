@@ -2,7 +2,7 @@ name: Generate Article & Instagram Post
 
 on:
   schedule:
-    - cron: '0 15 * * *'  # Ogni giorno alle 15:00 UTC (16:00 CET)
+    - cron: '0 15 * * *'  # Daily at 15:00 UTC
   workflow_dispatch:
 
 jobs:
@@ -12,79 +12,92 @@ jobs:
       contents: write
 
     steps:
-      - name: 📥 Checkout repository
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: 🐍 Set up Python
+      - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
 
-      - name: 📦 Install dependencies
+      - name: Install dependencies
         run: |
           pip install groq requests pillow
 
-      - name: 🔍 Debug Environment
+      - name: Debug Environment
         run: |
           echo "=== Environment Debug ==="
-          echo "✅ GROQ_API_KEY: ${GROQ_API_KEY:0:10}..."
-          echo "✅ INSTAGRAM_ACCESS_TOKEN: ${INSTAGRAM_ACCESS_TOKEN:0:10}..."
-          echo "✅ INSTAGRAM_BUSINESS_ACCOUNT_ID: ${INSTAGRAM_BUSINESS_ACCOUNT_ID}"
+          echo "GROQ_API_KEY: ${GROQ_API_KEY:0:10}..."
+          echo "INSTAGRAM_ACCESS_TOKEN: ${INSTAGRAM_ACCESS_TOKEN:0:10}..."
+          echo "INSTAGRAM_BUSINESS_ACCOUNT_ID: ${INSTAGRAM_BUSINESS_ACCOUNT_ID}"
           echo "================================"
 
-      - name: 📝 Generate Article
+      - name: Generate Article
         env:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
         run: |
-          echo "🚀 Starting article generation..."
+          echo "Starting article generation..."
           python scripts/generate_article.py
-          echo "✅ Article generation completed"
+          echo "Article generation completed"
 
-      - name: 📸 Generate Instagram Post
+      - name: Prepare Instagram assets (no publish)
         env:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           INSTAGRAM_ACCESS_TOKEN: ${{ secrets.INSTAGRAM_ACCESS_TOKEN }}
           INSTAGRAM_BUSINESS_ACCOUNT_ID: ${{ secrets.INSTAGRAM_BUSINESS_ACCOUNT_ID }}
         run: |
-          echo "🚀 Starting Instagram post generation..."
-          python scripts/generate_instagram.py
-          echo "✅ Instagram generation completed"
+          echo "Generating IG image+caption..."
+          python scripts/generate_instagram.py prepare
+          echo "Prepared IG assets"
         continue-on-error: true
 
-      - name: 📁 List generated files
+      - name: List generated files
         run: |
           echo "=== Files Generated ==="
           ls -lah docs/instagram/ 2>/dev/null | head -10 || echo "No image files found"
           ls -lah articles/ 2>/dev/null | head -5 || echo "No articles found"
           echo "========================"
 
-      - name: 🔄 Configure Git
+      - name: Configure Git
         run: |
           git config user.name "Diego Bot"
           git config user.email "diego@bot.local"
 
-      - name: 💾 Commit changes
+      - name: Commit changes
         run: |
           echo "=== Committing changes ==="
           git add -A
           git status
-          git commit -m "🤖 Auto-generated: article + instagram post $(date +%Y-%m-%d)" --allow-empty || echo "Nothing to commit"
+          git commit -m "Auto-generated: article + instagram assets $(date +%Y-%m-%d)" --allow-empty || echo "Nothing to commit"
           echo "========================"
 
-      - name: 🚀 Push to repository
+      - name: Push to repository
         run: |
           echo "=== Pushing to GitHub ==="
           git push origin main
           echo "Push completed successfully!"
           echo "========================"
 
-      - name: ✅ Job Summary
+      - name: Publish Instagram post
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          INSTAGRAM_ACCESS_TOKEN: ${{ secrets.INSTAGRAM_ACCESS_TOKEN }}
+          INSTAGRAM_BUSINESS_ACCOUNT_ID: ${{ secrets.INSTAGRAM_BUSINESS_ACCOUNT_ID }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: |
+          echo "Publishing IG post via Graph API..."
+          python scripts/generate_instagram.py publish
+          echo "Publish step completed"
+        continue-on-error: true
+
+      - name: Job Summary
         if: always()
         run: |
           echo "=== WORKFLOW SUMMARY ==="
-          echo "Article: Generated ✅"
-          echo "Instagram: Published or saved for backup"
-          echo "Commit: Done ✅"
-          echo "Push: Done ✅"
+          echo "Article: Generated"
+          echo "Instagram: Published (or prepared)"
+          echo "Commit: Done"
+          echo "Push: Done"
           echo "Images: Available at https://serpico3.github.io/Ai-site/instagram/"
           echo "========================"
+
