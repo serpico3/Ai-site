@@ -3,101 +3,177 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Blog Tech</title>
+  <title>Tech Blog | Home</title>
+  <meta name="description" content="Blog tech su sistemi, sicurezza e sviluppo, con guide pratiche ogni giorno." />
+  <link rel="canonical" href="https://example.com/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Tech Blog | Home" />
+  <meta property="og:description" content="Blog tech su sistemi, sicurezza e sviluppo, con guide pratiche ogni giorno." />
+  <meta property="og:url" content="https://example.com/" />
+  <meta property="og:site_name" content="Tech Blog" />
+  
+  <meta property="og:image" content="https://example.com/assets/images/chip.svg" />
+  
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Tech Blog | Home" />
+  <meta name="twitter:description" content="Blog tech su sistemi, sicurezza e sviluppo, con guide pratiche ogni giorno." />
+  
+  <meta name="twitter:image" content="https://example.com/assets/images/chip.svg" />
+  
   <link rel="stylesheet" href="assets/style.css" />
 </head>
 <body>
-  <header>
-    <main>
-      <div class="topbar">
-        <h1 class="brand" style="margin:0"><img class="chip-logo" src="assets/images/chip.svg" alt=""/>Blog Tech</h1>
-        <nav class="nav"><a href="index.html">Home</a><a href="chi-siamo.html">Chi Siamo</a></nav>
-      </div>
-      <div class="hero-wrap">
-        <span class="hero-panel">Tech Blog</span>
-        <span class="hero-panel big flicker" style="margin-left:8px">Tech Blog</span>
-      </div>
-      <p class="hero">Nuovi articoli tech, 5 minuti al giorno – di Diego Serpelloni</p>
-    </main>
+  <header class="site-header">
+    <div class="container nav-wrap">
+      <a class="logo" href="index.html">TECH BLOG</a>
+      <nav class="nav">
+        <a href="index.html" class="is-active">Home</a>
+        <a href="articles/index.html" class="">Articles</a>
+        <a href="categories/index.html" class="">Categories</a>
+        <a href="chi-siamo.html" class="">About</a>
+        <a href="index.html#contact">Contact</a>
+      </nav>
+    </div>
   </header>
-  <main id="content">
-    <div class="layout">
-      <div>
-        <h2 class="title" style="margin-top:0">Ultimi articoli</h2>
-        <div id="posts"></div>
-      </div>
-      <aside>
-        <div class="panel trending">
-          <h3>Trending Now</h3>
-          <div id="trending"></div>
+
+  <main class="main">
+    
+  <section class="hero">
+    <div class="container hero-inner">
+      <div class="hero-copy">
+        <p class="eyebrow">Firmware - Cybersecurity - Embedded Systems</p>
+        <h1>Technology. Code. Systems.</h1>
+        <p class="lead">Articoli pratici su infrastrutture, sicurezza e automazione.</p>
+        <div class="hero-actions">
+          <a class="btn primary" href="articles/index.html">Read latest articles</a>
+          <span class="hint">Aggiornato ogni giorno - 5 minuti di lettura</span>
         </div>
-        <div class="panel newsletter" style="margin-top:16px">
-          <h3>Stay Updated</h3>
-          <form onsubmit="event.preventDefault(); alert('Grazie!');">
-            <input class="input" type="email" placeholder="Email" required />
-            <button class="btn" type="submit">Subscribe</button>
-          </form>
+      </div>
+      <div class="hero-panel">
+        
+        <div class="panel-line">
+          <span class="dot"></span>
+          <span>New: checklist affidabilita PCB</span>
+        </div>
+        
+        <div class="panel-line">
+          <span class="dot"></span>
+          <span>Hardening per server locali</span>
+        </div>
+        
+        <div class="panel-line">
+          <span class="dot"></span>
+          <span>Zero downtime update in laboratorio</span>
+        </div>
+        
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="latest">
+    <div class="container layout">
+      <div class="content">
+        <div class="section-head">
+          <h2>Latest Articles</h2>
+          <p>Note tecniche chiare, con esempi pratici e best practice.</p>
+        </div>
+        <div class="card-grid">
+          
+          <article class="card">
+            <a href="article/permessi-linux-laboratorio-scolastico/index.html" class="card-media">
+              <img src="assets/images/chip.svg" alt="Permessi Linux in laboratorio scolastico: guida pratica" loading="lazy" decoding="async" />
+            </a>
+            <div class="card-body">
+              <h3>Permessi Linux in laboratorio scolastico: guida pratica</h3>
+              <p>Come impostare utenti, gruppi e permessi per la cartella studenti senza caos e senza rischi.</p>
+              <a class="link" href="article/permessi-linux-laboratorio-scolastico/index.html">Read more</a>
+            </div>
+          </article>
+          
+        </div>
+      </div>
+
+      <aside class="sidebar">
+        <div class="panel trending">
+          <h3>Trending</h3>
+          <ul>
+            
+            <li>
+              <span class="item-title">Permessi Linux in laboratorio scolastico: guida pratica</span>
+              <span class="item-meta">2026-01-19</span>
+            </li>
+            
+          </ul>
+        </div>
+
+        <div class="panel">
+          <h3>Categories</h3>
+          <div class="tags">
+            
+            <a class="tag" href="tag/linux/index.html">Linux</a>
+            
+            <a class="tag" href="tag/permessi/index.html">Permessi</a>
+            
+            <a class="tag" href="tag/sysadmin/index.html">Sysadmin</a>
+            
+            <a class="tag" href="tag/sicurezza/index.html">Sicurezza</a>
+            
+            <a class="tag" href="tag/storage/index.html">Storage</a>
+            
+          </div>
         </div>
       </aside>
     </div>
+  </section>
+
+  <section class="section" id="categories">
+    <div class="container categories">
+      <h2>Categories</h2>
+      <div class="tags">
+        
+        <a class="tag" href="tag/linux/index.html">Linux <span class="tag-count">1</span></a>
+        
+        <a class="tag" href="tag/permessi/index.html">Permessi <span class="tag-count">1</span></a>
+        
+        <a class="tag" href="tag/sysadmin/index.html">Sysadmin <span class="tag-count">1</span></a>
+        
+        <a class="tag" href="tag/sicurezza/index.html">Sicurezza <span class="tag-count">1</span></a>
+        
+        <a class="tag" href="tag/storage/index.html">Storage <span class="tag-count">1</span></a>
+        
+      </div>
+    </div>
+  </section>
+
   </main>
-  <footer>
-    <div class="footer-inner">
-      <div>Scritto e curato da Diego Serpelloni • <a href="chi-siamo.html">Chi siamo</a></div>
+
+  <footer id="contact">
+    <div class="container footer-inner">
+      <div class="footer-meta">2026 Tech Blog - Diego</div>
+      <div class="footer-line"></div>
       <div class="social">
-        <a href="https://github.com/Diego" aria-label="GitHub"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5l3.09 6.26L22 7.77l-5 4.87L18.18 22 12 18.56 5.82 22 7 12.64l-5-4.87 6.91-1.01L12 .5z"/></svg></a>
-        <a href="#" aria-label="LinkedIn"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5C4.98 4.88 3.86 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8h4V24h-4V8zm7.5 0h3.8v2.2h.05c.53-1 1.82-2.2 3.75-2.2C20.4 8 22 10.05 22 13.7V24h-4v-8.2c0-1.95-.03-4.45-2.7-4.45-2.7 0-3.11 2.11-3.11 4.3V24H8V8z"/></svg></a>
-        <a href="#" aria-label="X"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M17.53 3H21l-7.5 8.57L22.5 21h-6.17l-5.1-6.2L5.4 21H2l8-9.14L2.5 3h6.25l4.73 5.76L17.53 3z"/></svg></a>
-        <a href="#" aria-label="YouTube"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3 3 0 00-2.1-2.1C19 3.5 12 3.5 12 3.5s-7 0-9.4.6A3 3 0 00.5 6.2 31.3 31.3 0 000 12a31.3 31.3 0 00.6 5.8 3 3 0 002.1 2.1c2.4.6 9.4.6 9.4.6s7 0 9.4-.6a3 3 0 002.1-2.1A31.3 31.3 0 0024 12a31.3 31.3 0 00-.5-5.8zM9.75 15.02V8.98L15.5 12l-5.75 3.02z"/></svg></a>
-        <a href="#" aria-label="Instagram"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.2c3.2 0 3.6 0 4.9.07 1.17.05 1.8.24 2.22.4.56.22.96.48 1.37.9.42.41.68.8.9 1.36.17.42.36 1.05.4 2.22.07 1.33.07 1.74.07 4.9s0 3.57-.07 4.9c-.04 1.17-.23 1.8-.4 2.22a3.6 3.6 0 01-.9 1.36c-.41.42-.81.68-1.37.9-.41.16-1.05.35-2.22.4-1.33.07-1.74.07-4.9.07s-3.57 0-4.9-.07z"/></svg></a>
+        <a href="https://github.com/Diego" aria-label="GitHub">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 .5l3.09 6.26L22 7.77l-5 4.87L18.18 22 12 18.56 5.82 22 7 12.64l-5-4.87 6.91-1.01L12 .5z"/>
+          </svg>
+        </a>
+        <a href="#" aria-label="LinkedIn">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M4.98 3.5C4.98 4.88 3.86 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8h4V24h-4V8zm7.5 0h3.8v2.2h.05c.53-1 1.82-2.2 3.75-2.2C20.4 8 22 10.05 22 13.7V24h-4v-8.2c0-1.95-.03-4.45-2.7-4.45-2.7 0-3.11 2.11-3.11 4.3V24H8V8z"/>
+          </svg>
+        </a>
+        <a href="#" aria-label="X">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M17.53 3H21l-7.5 8.57L22.5 21h-6.17l-5.1-6.2L5.4 21H2l8-9.14L2.5 3h6.25l4.73 5.76L17.53 3z"/>
+          </svg>
+        </a>
       </div>
     </div>
   </footer>
-  <script>
-    // Skeleton placeholders
-    const postsContainer = document.getElementById('posts');
-    postsContainer.innerHTML = Array.from({length: 6}).map(()=>`<div class="post skeleton"></div>`).join('');
 
-    fetch('data/posts.json?_=' + Date.now())
-      .then(r=>r.json())
-      .then(data=>{
-        const posts=[...data.posts].sort((a,b)=>b.date.localeCompare(a.date));
-        const c=document.getElementById('posts');
-        c.innerHTML='';
-        posts.forEach((p,i)=>{
-          const el=document.createElement('article');
-          el.className='post';
-          el.style.animationDelay=(i*0.05)+'s';
-          el.innerHTML=`
-            <a href="${p.path}">
-              <img src="${p.image}" alt="${p.title}">
-            </a>
-            <h2 class="title"><a href="${p.path}">${p.title}</a></h2>
-            <div class="meta">${new Date(p.date).toLocaleDateString('it-IT')} • ${p.read_minutes} min</div>
-            <p>${p.summary}</p>
-            <div>${(p.tags||[]).map(t=>`<span class='tag'>${t}</span>`).join('')}</div>
-            <a class="readmore" href="${p.path}">Leggi</a>
-          `;
-          c.appendChild(el);
-        });
-
-        const trending=document.getElementById('trending');
-        trending.innerHTML='';
-        posts.slice(0,3).forEach(p=>{
-          const el=document.createElement('a');
-          el.href=p.path; el.className='item';
-          el.innerHTML=`
-            <img class='thumb' src='${p.image}' alt='${p.title}'>
-            <div>
-              <div class='title'>${p.title}</div>
-              <div class='meta'>${new Date(p.date).toLocaleDateString('it-IT')}</div>
-            </div>`;
-          trending.appendChild(el);
-        });
-      })
-      .catch(()=>{
-        postsContainer.innerHTML='<p>Nessun articolo ancora. Torna più tardi!</p>'
-      });
-  </script>
+  <script src="assets/script.js"></script>
+  
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebSite", "name": "Tech Blog", "url": "https://example.com/", "description": "Blog tech su sistemi, sicurezza e sviluppo, con guide pratiche ogni giorno."}</script>
+  
 </body>
 </html>

@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "tags": [
+    {
+      "tag": "linux",
+      "label": "Linux",
+      "count": 1,
+      "path": "tag/linux/index.html"
+    },
+    {
+      "tag": "permessi",
+      "label": "Permessi",
+      "count": 1,
+      "path": "tag/permessi/index.html"
+    },
+    {
+      "tag": "sysadmin",
+      "label": "Sysadmin",
+      "count": 1,
+      "path": "tag/sysadmin/index.html"
+    },
+    {
+      "tag": "sicurezza",
+      "label": "Sicurezza",
+      "count": 1,
+      "path": "tag/sicurezza/index.html"
+    },
+    {
+      "tag": "storage",
+      "label": "Storage",
+      "count": 1,
+      "path": "tag/storage/index.html"
+    }
+  ]
+}

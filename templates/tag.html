@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+  <section class="page-hero">
+    <div class="container">
+      <h1>{{ tag.label }}</h1>
+      <p>{{ tag.count }} articoli per questa categoria.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="post-list">
+        {% for post in posts %}
+        <article class="post-card">
+          <a class="post-card-media" href="{{ post.url }}">
+            <img src="{{ post.image_url }}" alt="{{ post.image_alt }}" loading="lazy" decoding="async" />
+          </a>
+          <div class="post-card-body">
+            <h2 class="post-card-title"><a href="{{ post.url }}">{{ post.title }}</a></h2>
+            <div class="post-card-meta">{{ post.date }} - {{ post.read_time }} min - {{ post.author }}</div>
+            <p class="post-card-excerpt">{{ post.excerpt }}</p>
+            <div class="tags">
+              {% for t in post.tags %}
+              <a class="tag" href="{{ t.url }}">{{ t.label }}</a>
+              {% endfor %}
+            </div>
+          </div>
+        </article>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+{% endblock %}

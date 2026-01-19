@@ -1,0 +1,17 @@
+[
+  "Gestione permessi e gruppi su Linux in laboratorio scolastico",
+  "Backup e restore per cartelle studenti su NAS locale",
+  "Hardening SSH su server Debian per scuola",
+  "Monitoraggio con Prometheus e Grafana per server interni",
+  "Samba vs NFS per condivisioni didattiche",
+  "Automazione con Ansible per aggiornare i PC del laboratorio",
+  "Policy di update e patching per ambienti scolastici",
+  "Segmentazione di rete con VLAN per didattica e amministrazione",
+  "Firewall UFW e nftables per server locali",
+  "Logging centralizzato con rsyslog e fail2ban",
+  "Guida pratica a cron e systemd timer",
+  "Proxmox base per laboratorio: snapshot e backup",
+  "Docker per ambienti di test in laboratorio",
+  "Gestione storage ZFS per directory studenti",
+  "Procedure di disaster recovery per servizi interni"
+]

@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block content %}
+  <section class="hero">
+    <div class="container hero-inner">
+      <div class="hero-copy">
+        <p class="eyebrow">{{ site.eyebrow }}</p>
+        <h1>{{ site.hero_title }}</h1>
+        <p class="lead">{{ site.hero_subtitle }}</p>
+        <div class="hero-actions">
+          <a class="btn primary" href="{{ nav_links.articles }}">Read latest articles</a>
+          <span class="hint">Aggiornato ogni giorno - 5 minuti di lettura</span>
+        </div>
+      </div>
+      <div class="hero-panel">
+        {% for item in hero_panel %}
+        <div class="panel-line">
+          <span class="dot"></span>
+          <span>{{ item }}</span>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="latest">
+    <div class="container layout">
+      <div class="content">
+        <div class="section-head">
+          <h2>Latest Articles</h2>
+          <p>Note tecniche chiare, con esempi pratici e best practice.</p>
+        </div>
+        <div class="card-grid">
+          {% for post in latest_posts %}
+          <article class="card">
+            <a href="{{ post.url }}" class="card-media">
+              <img src="{{ post.image_url }}" alt="{{ post.image_alt }}" loading="lazy" decoding="async" />
+            </a>
+            <div class="card-body">
+              <h3>{{ post.title }}</h3>
+              <p>{{ post.excerpt }}</p>
+              <a class="link" href="{{ post.url }}">Read more</a>
+            </div>
+          </article>
+          {% endfor %}
+        </div>
+      </div>
+
+      <aside class="sidebar">
+        <div class="panel trending">
+          <h3>Trending</h3>
+          <ul>
+            {% for post in trending_posts %}
+            <li>
+              <span class="item-title">{{ post.title }}</span>
+              <span class="item-meta">{{ post.date }}</span>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+
+        <div class="panel">
+          <h3>Categories</h3>
+          <div class="tags">
+            {% for tag in tags %}
+            <a class="tag" href="{{ tag.url }}">{{ tag.label }}</a>
+            {% endfor %}
+          </div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="section" id="categories">
+    <div class="container categories">
+      <h2>Categories</h2>
+      <div class="tags">
+        {% for tag in tags %}
+        <a class="tag" href="{{ tag.url }}">{{ tag.label }} <span class="tag-count">{{ tag.count }}</span></a>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+{% endblock %}

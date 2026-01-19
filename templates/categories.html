@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+  <section class="page-hero">
+    <div class="container">
+      <h1>Categories</h1>
+      <p>Tag aggiornati in automatico con il numero di articoli per categoria.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="tags">
+        {% for tag in tags %}
+        <a class="tag" href="{{ tag.url }}">{{ tag.label }} <span class="tag-count">{{ tag.count }}</span></a>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+{% endblock %}

@@ -3,35 +3,35 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>About | Tech Blog</title>
-  <meta name="description" content="Chi sono e come scrivo gli articoli del Tech Blog." />
-  <link rel="canonical" href="https://example.com/chi-siamo.html" />
+  <title>Categories</title>
+  <meta name="description" content="Elenco categorie e tag aggiornati automaticamente." />
+  <link rel="canonical" href="https://example.com/categories/" />
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="About | Tech Blog" />
-  <meta property="og:description" content="Chi sono e come scrivo gli articoli del Tech Blog." />
-  <meta property="og:url" content="https://example.com/chi-siamo.html" />
+  <meta property="og:title" content="Categories" />
+  <meta property="og:description" content="Elenco categorie e tag aggiornati automaticamente." />
+  <meta property="og:url" content="https://example.com/categories/" />
   <meta property="og:site_name" content="Tech Blog" />
   
   <meta property="og:image" content="https://example.com/assets/images/chip.svg" />
   
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="About | Tech Blog" />
-  <meta name="twitter:description" content="Chi sono e come scrivo gli articoli del Tech Blog." />
+  <meta name="twitter:title" content="Categories" />
+  <meta name="twitter:description" content="Elenco categorie e tag aggiornati automaticamente." />
   
   <meta name="twitter:image" content="https://example.com/assets/images/chip.svg" />
   
-  <link rel="stylesheet" href="assets/style.css" />
+  <link rel="stylesheet" href="../assets/style.css" />
 </head>
 <body>
   <header class="site-header">
     <div class="container nav-wrap">
-      <a class="logo" href="index.html">TECH BLOG</a>
+      <a class="logo" href="../index.html">TECH BLOG</a>
       <nav class="nav">
-        <a href="index.html" class="">Home</a>
-        <a href="articles/index.html" class="">Articles</a>
-        <a href="categories/index.html" class="">Categories</a>
-        <a href="chi-siamo.html" class="is-active">About</a>
-        <a href="index.html#contact">Contact</a>
+        <a href="../index.html" class="">Home</a>
+        <a href="../articles/index.html" class="">Articles</a>
+        <a href="../categories/index.html" class="is-active">Categories</a>
+        <a href="../chi-siamo.html" class="">About</a>
+        <a href="../index.html#contact">Contact</a>
       </nav>
     </div>
   </header>
@@ -40,25 +40,26 @@
     
   <section class="page-hero">
     <div class="container">
-      <h1>Chi sono</h1>
-      <p>Blog tecnico con focus su sistemi, sicurezza e automazione.</p>
+      <h1>Categories</h1>
+      <p>Tag aggiornati in automatico con il numero di articoli per categoria.</p>
     </div>
   </section>
 
   <section class="section">
     <div class="container">
-      <article class="post">
-        <img class="post-cover" src="assets/images/author-placeholder.svg" alt="Diego" />
-        <div class="post-content">
-          
-          <p>Sono Diego, sistemista junior e docente di Python. Lavoro in una scuola e gestisco server Linux, storage condivisi, permessi per studenti e una cartella pubblica per le consegne.</p>
-          
-          <p>In questo blog pubblico guide pratiche, checklist e procedure reali: quello che faccio davvero in laboratorio e in aula. Niente marketing, solo cose utili.</p>
-          
-          <p>Se vuoi suggerire un argomento puoi aprire una issue sul repository GitHub.</p>
-          
-        </div>
-      </article>
+      <div class="tags">
+        
+        <a class="tag" href="../tag/linux/index.html">Linux <span class="tag-count">1</span></a>
+        
+        <a class="tag" href="../tag/permessi/index.html">Permessi <span class="tag-count">1</span></a>
+        
+        <a class="tag" href="../tag/sysadmin/index.html">Sysadmin <span class="tag-count">1</span></a>
+        
+        <a class="tag" href="../tag/sicurezza/index.html">Sicurezza <span class="tag-count">1</span></a>
+        
+        <a class="tag" href="../tag/storage/index.html">Storage <span class="tag-count">1</span></a>
+        
+      </div>
     </div>
   </section>
 
@@ -88,9 +89,9 @@
     </div>
   </footer>
 
-  <script src="assets/script.js"></script>
+  <script src="../assets/script.js"></script>
   
-  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "AboutPage", "name": "About", "url": "https://example.com/chi-siamo.html"}</script>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "CollectionPage", "name": "Categories", "url": "https://example.com/categories/"}</script>
   
 </body>
 </html>

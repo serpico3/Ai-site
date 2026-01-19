@@ -46,11 +46,19 @@ jobs:
 
       - name: Generate daily article
         env:
-          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
-          IMAGE_API_URL: ${{ vars.IMAGE_API_URL }}
-          IMAGE_API_KEY: ${{ secrets.IMAGE_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_TEXT_MODEL: ${{ vars.OPENAI_TEXT_MODEL }}
+          OPENAI_IMAGE_MODEL: ${{ vars.OPENAI_IMAGE_MODEL }}
+          SITE_BASE_URL: ${{ vars.SITE_BASE_URL }}
+          RUN_BUILD: "false"
         run: |
           python scripts/generate_daily.py
+
+      - name: Build site
+        env:
+          SITE_BASE_URL: ${{ vars.SITE_BASE_URL }}
+        run: |
+          python scripts/build_site.py
 
       - name: Commit and push if changed
         run: |

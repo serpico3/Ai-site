@@ -4,6 +4,7 @@ $root = (Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path))
 $venv = Join-Path $root '.venv\\Scripts\\Activate.ps1'
 $req = Join-Path $root 'requirements.txt'
 $py = Join-Path $root 'scripts\\generate_daily.py'
+$build = Join-Path $root 'scripts\\build_site.py'
 
 if (Test-Path $venv) { . $venv }
 
@@ -14,4 +15,4 @@ if (-not (Get-Command pip -ErrorAction SilentlyContinue)) {
 pip install -r $req
 
 python $py
-
+python $build
