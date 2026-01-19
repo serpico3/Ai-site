@@ -1,5 +1,1 @@
-Generated: 2026-01-08T20:35:56.371308
-Caption:
-"Scopri gli ultimi trends in DevOps e Infrastructure as Code, migliorando l'efficienza e la sicurezza delle tue operazioni IT #DevOps #InfrastructureAsCode #Tech #Networking Cosa ne pensi?"
-
-Image: /tmp/instagram_post_20260108.png
+"Scopriamo insieme gli ultimi trend in DevOps e Infrastructure as Code, tecnologie che stanno rivoluzionando il modo di lavorare nel settore tech #DevOps #Tech #InfrastructureAsCode #Networking Cosa ne pensi?"
