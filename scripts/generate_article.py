@@ -12,22 +12,110 @@ from typing import Tuple
 
 try:
     from openai import OpenAI  # type: ignore
+    from openai import RateLimitError  # type: ignore
 except Exception:
     OpenAI = None  # Deferred import error until runtime
+    class RateLimitError(Exception):
+        pass
+
+try:
+    from groq import Groq  # optional fallback
+except Exception:
+    Groq = None
+
+
+def _prompt() -> str:
+    return """Sei Diego Serpelloni (22 anni), appassionato di sistemi, networking e sviluppo web.
+
+Scrivi un articolo in italiano per il tuo blog personale, chiaro e utile anche a lettori non esperti.
+
+Formato richiesto (segui esattamente):
+# [Titolo accattivante]
+
+## TL;DR
+[Riassunto in 1–2 frasi sull'idea centrale]
+
+## Contesto
+[Definisci perché l'argomento è rilevante ora e per chi]
+
+## Concetti chiave
+- [Elenco puntato sintetico (3–5 voci)]
+
+## Come funziona
+[Spiegazione pratica con esempi reali e comandi/strumenti se utili]
+
+## Best practice
+- [Consigli e insidie comuni]
+
+## Casi d'uso
+[2–3 scenari concreti]
+
+## Prossimi passi
+[Checklist pratica per iniziare]
+
+Requisiti di stile:
+- Lunghezza: circa 1200–1600 parole
+- Linguaggio: italiano chiaro, tono amichevole e professionale
+- Niente menzioni all'uso di AI o automazione
+- Usa solo intestazioni (#, ##, ###), paragrafi e liste con "- "; niente tabelle o link fittizi
+- Non inventare fonti; nessun riferimento a ricerche in tempo reale
+
+Scrivi SOLO il contenuto dell'articolo, senza testo extra."""
+
+
+def _try_openai() -> str | None:
+    if OpenAI is None:
+        return None
+    api_key = os.environ.get("OPENAI_API_KEY")
+    if not api_key:
+        return None
+    print("Connessione a OpenAI in corso...")
+    client = OpenAI(api_key=api_key)
+    try:
+        resp = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[{"role": "user", "content": _prompt()}],
+            max_tokens=1400,
+            temperature=0.8,
+        )
+        return (resp.choices[0].message.content or "").strip()
+    except RateLimitError as e:
+        print(f"Rate limit/quota OpenAI: {e}")
+        return None
+    except Exception as e:
+        print(f"OpenAI error: {e}")
+        return None
+
+
+def _try_groq() -> str | None:
+    if Groq is None:
+        return None
+    api_key = os.environ.get("GROQ_API_KEY")
+    if not api_key:
+        return None
+    try:
+        print("Connessione a Groq (fallback) in corso...")
+        client = Groq(api_key=api_key)
+        resp = client.chat.completions.create(
+            model="llama-3.3-70b-versatile",
+            messages=[{"role": "user", "content": _prompt()}],
+            max_tokens=1400,
+        )
+        return (resp.choices[0].message.content or "").strip()
+    except Exception as e:
+        print(f"Groq fallback error: {e}")
+        return None
 
 
 def generate_article() -> str:
-    """Genera articolo usando OpenAI (chat completions)."""
-    print("Connessione a OpenAI in corso...")
-    api_key = os.environ.get("OPENAI_API_KEY")
-    if not api_key:
-        raise ValueError("OPENAI_API_KEY non trovata (configura un secret)")
-    if OpenAI is None:
-        raise RuntimeError("openai SDK non installato. Aggiungi 'openai' alle dipendenze.")
-
-    client = OpenAI(api_key=api_key)
+    """Genera articolo con fallback: OpenAI → Groq → vuoto."""
     now = datetime.now()
     print(f"Data: {now.strftime('%Y-%m-%d %H:%M')}")
+    print("Generazione articolo...")
+    content = _try_openai()
+    if not content:
+        content = _try_groq()
+    return content or ""
 
     prompt = """Sei Diego Serpelloni (22 anni), appassionato di sistemi, networking e sviluppo web.
 
@@ -362,6 +450,10 @@ def main():
 
         now = datetime.now()
         content = generate_article()
+        if not content.strip():
+            print("Nessun articolo generato (quota insufficiente o errore). Reindex e uscita senza errore.")
+            update_all_pages()
+            return
         print("Creazione HTML...")
         html, title, tldr = create_html_article(content, now)
         slug = save_article(html, now)

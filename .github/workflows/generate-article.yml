@@ -22,7 +22,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install openai requests pillow
+          pip install openai groq requests pillow
 
       - name: Debug Environment
         run: |
